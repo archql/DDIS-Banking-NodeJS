@@ -36,6 +36,61 @@ app.use('/attachments', express.static(server_attachments))
 // create server
 const server = http.createServer(app);
 
+const clients: any[] = [
+    {
+        "id": "1",
+        "surname": "Иванов",
+        "name": "Иван",
+        "patronymic": "Иванович",
+        "birthdate": "01.01.1990",
+        "gender": "Мужской",
+        "passportSeries": "AB",
+        "passportNumber": "123456",
+        "issuedBy": "Отделом УФМС России",
+        "issueDate": "10.05.2015",
+        "identificationNumber": "12345678901234567890",
+        "placeOfBirth": "Москва",
+        "residenceCity": "Москва",
+        "residenceAddress": "ул. Пушкина, д. 10, кв. 5",
+        "homePhone": "+7 (123) 456-78-90",
+        "mobilePhone": "+7 (987) 654-32-10",
+        "email": "ivanov@example.com",
+        "registrationCity": "Москва",
+        "maritalStatus": "Женат",
+        "citizenship": "Россия",
+        "disability": "Нет",
+        "pensioner": "Нет",
+        "monthlyIncome": "1500",
+        "militaryService": "y"
+    },
+    {
+        "id": "2",
+        "surname": "Петров",
+        "name": "Иван",
+        "patronymic": "Иванович",
+        "birthdate": "01.01.1990",
+        "gender": "Мужской",
+        "passportSeries": "AB",
+        "passportNumber": "123456",
+        "issuedBy": "Отделом УФМС России",
+        "issueDate": "10.05.2015",
+        "identificationNumber": "12345678901234567890",
+        "placeOfBirth": "Москва",
+        "residenceCity": "Москва",
+        "residenceAddress": "ул. Пушкина, д. 10, кв. 5",
+        "homePhone": "+7 (123) 456-78-90",
+        "mobilePhone": "+7 (987) 654-32-10",
+        "email": "ivanov@example.com",
+        "registrationCity": "Москва",
+        "maritalStatus": "Женат",
+        "citizenship": "Россия",
+        "disability": "Нет",
+        "pensioner": "Нет",
+        "monthlyIncome": "1500",
+        "militaryService": "y"
+    }
+]
+
 app.get('/',(req,res) => {
     res.render('main.hbs', {layout : 'index'});
 });
@@ -44,8 +99,19 @@ app.get('/add_client',(req,res) => {
 });
 app.post('/add_client', (req, res) => {
     // Retrieve form data from request body
-    const formData = req.body;
+    const formData = Object.assign({}, req.body);
     console.log(req.body);
+
+    const index = clients.findIndex(client =>
+        (client.passportSeries === formData.passportSeries && client.passportNumber === formData.passportNumber) ||
+        client.identificationNumber === formData.identificationNumber
+    );
+    if (index !== -1) {
+        return res.render('add_client.hbs', {layout : 'index', error: true});
+    }
+
+    formData.id = parseInt(clients[clients.length - 1]?.id) + 1 ?? 1;
+    clients.push(formData);
 
     // Process the form data as needed
     // For example, you can access formData.mobilePhone, formData.surname, etc.
@@ -94,33 +160,31 @@ app.get('/accounts',(req,res) => {
 app.get('/clients',(req,res) => {
     res.render('clients.hbs', {
         layout : 'index',
-        clients: [
-    {
-        "surname": "Иванов",
-        "name": "Иван",
-        "patronymic": "Иванович",
-        "birthdate": "01.01.1990",
-        "gender": "Мужской",
-        "passportSeries": "AB",
-        "passportNumber": "123456",
-        "issuedBy": "Отделом УФМС России",
-        "issueDate": "10.05.2015",
-        "identificationNumber": "12345678901234567890",
-        "placeOfBirth": "Москва",
-        "residenceCity": "Москва",
-        "residenceAddress": "ул. Пушкина, д. 10, кв. 5",
-        "homePhone": "+7 (123) 456-78-90",
-        "mobilePhone": "+7 (987) 654-32-10",
-        "email": "ivanov@example.com",
-        "registrationCity": "Москва",
-        "maritalStatus": "Женат",
-        "citizenship": "Россия",
-        "disability": "Нет",
-        "pensioner": "Нет",
-        "monthlyIncome": "1500"
-    }
-        ]
+        clients: clients
     });
+});
+app.delete('/clients/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+
+    console.log(`client delete request ${id}`)
+
+    // Find the index of the client with the specified ID
+    // const index = -1; // TODO db request clients.findIndex(client => client.id === id);
+    const index = clients.findIndex(client => parseInt(client.id) === id);
+    console.log(`index ${index}`)
+
+    // If client with the specified ID is found, delete it
+    if (index !== -1) {
+        clients.splice(index, 1);
+        res.render('clients.hbs', {
+            layout : 'index',
+            clients: clients,
+            error: false
+        });
+    } else {
+        // If client with the specified ID is not found, return 404 Not Found
+        res.status(404).json({ error: `Client with ID ${id} not found` });
+    }
 });
 
 // 404

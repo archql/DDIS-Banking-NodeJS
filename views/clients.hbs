@@ -3,6 +3,9 @@
     {{#if clients}}
     {{#each clients}}
         <div class="client-data">
+            <div class="btn delete float" data-id="{{this.id}}">
+                Delete
+            </div>
             <div class="data-row">
                 <div class="data-label">ID</div>
                 <div class="data-value">{{this.id}}</div>
@@ -93,3 +96,4 @@
         <div>No clients :/</div>
     {{/if}}
 </div>
+<script src="delete_client.js"></script>
