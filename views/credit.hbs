@@ -1,0 +1,14 @@
+<h2 style="text-align: center">Форма заключения договора кредитования</h2>
+<form action="/credit" method="POST">
+
+</form>
+{{#if (ifdef error)}}
+    <div id="notification-panel">
+        {{#if (not error) }}
+            <h4 style="color: green">Credit success :)</h4>
+        {{else}}
+            <h4 style="color: red">Credit failure :(</h4>
+        {{/if}}
+    </div>
+{{/if}}
+<script src="notification.js"></script>

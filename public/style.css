@@ -1,9 +1,11 @@
 body {
-    background: paleturquoise;
+    background: #eff0f3;
     height: 100vh;
     margin: 0;
     display: flex;
     flex-direction: column;
+    font-family: 'Roboto', sans-serif; /* Change to the desired font */
+    justify-content: space-between;
 }
 
 /* main container */
@@ -164,8 +166,10 @@ main ul (DUPLICATION)
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: CadetBlue;
+    background-color: #0047ab;
     position: sticky;
+    display: flex;
+    align-items: center
 }
 
 .main_nav_ul li {
@@ -174,18 +178,25 @@ main ul (DUPLICATION)
 
 .main_nav_ul li a {
     display: block;
-    color: white;
+    color: #EDEDED;
     text-align: center;
+    font-weight: bold;
     padding: 14px 16px;
     text-decoration: none;
 }
 
+.logo {
+    width: 5em; /* Adjust as needed */
+    height: auto; /* To maintain aspect ratio */
+    margin-right: 20px; /* Adjust spacing */
+}
+
 /* Change the link color to #111 (black) on hover */
 .main_nav_ul a:hover {
-    background-color: Teal;
+    background-color: #3a80e7;
 }
 .main_nav_ul .active {
-    background-color: #04AA6D;
+    background-color: #0f67e1;
 }
 .user_info {
     display: flex;
@@ -207,41 +218,154 @@ main ul (DUPLICATION)
     padding: 5px;
 }
 
-/*
-scrollbar
- */
-.messaging::-webkit-scrollbar {
-    width: 6px;               /* width of the entire scrollbar */
-}
-.messaging::-webkit-scrollbar-track {
-    background: ghostwhite;        /* color of the tracking area */
-}
-.messaging::-webkit-scrollbar-thumb {
-    background-color: gray;    /* color of the scroll thumb */
-    border-radius: 4px;       /* roundness of the scroll thumb */
-    /*border: 3px solid CadetBlue;  /* creates padding around scroll thumb */
+section {
+    padding: 20px;
+    text-align: center;
 }
 
-.user_list::-webkit-scrollbar {
-    width: 6px;               /* width of the entire scrollbar */
-}
-.user_list::-webkit-scrollbar-track {
-    background: ghostwhite;        /* color of the tracking area */
-}
-.user_list::-webkit-scrollbar-thumb {
-    background-color: gray;    /* color of the scroll thumb */
-    border-radius: 4px;       /* roundness of the scroll thumb */
-    /*border: 3px solid CadetBlue;  /* creates padding around scroll thumb */
+form {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#message_content::-webkit-scrollbar {
-    width: 6px;               /* width of the entire scrollbar */
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    overflow: hidden;
 }
-#message_content::-webkit-scrollbar-track {
-    background: ghostwhite;        /* color of the tracking area */
+
+.form-group label {
+    display: block;
+    width: 135px;
+    margin: auto 10px;
 }
-#message_content::-webkit-scrollbar-thumb {
-    background-color: gray;    /* color of the scroll thumb */
-    border-radius: 4px;       /* roundness of the scroll thumb */
-    /*border: 3px solid CadetBlue;  /* creates padding around scroll thumb */
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group select,
+.form-group input[type="tel"],
+.form-group input[type="email"],
+.form-group input[type="checkbox"] {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.form-group input[type="checkbox"] {
+    flex: 1 1;
+}
+
+.form-group select {
+    width: 100%;
+}
+
+.required::after {
+    content: "*";
+    color: red;
+    margin-left: 2px;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #0047ab;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #003c8a;
+}
+
+.error-message {
+    color: red;
+    margin-top: 5px;
+}
+
+/* Adjust footer position */
+footer {
+    background-color: #0047ab;
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    z-index: 999; /* Ensure footer is on top */
+}
+
+.client-data {
+    max-width: 400px;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.clients-data {
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.data-row {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.data-label {
+    flex: 1;
+    min-width: 120px;
+    font-weight: bold;
+}
+
+.data-value {
+    flex: 2;
+}
+
+#notification-panel {
+    position: fixed;
+    transform: translate(-50%, -50%);
+    padding: 10px 50px;
+    bottom: 50px;
+    left: 50%;
+    background-color: #fff; /* Red color */
+    text-align: center;
+    display: block; /* Initially hidden */
+    z-index: 999999;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    opacity: 1;
+    transition: opacity 5s ease;
+}
+
+.account-details {
+    background-color: #f9f9f9;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.row {
+    margin-bottom: 10px;
+}
+
+.mono {
+    font-family: monospace; /* To maintain spacing */
 }

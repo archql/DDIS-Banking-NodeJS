@@ -1,0 +1,35 @@
+<h2 style="text-align: center">Счета</h2>
+<div class="clients-data">
+    {{#if accounts}}
+        {{#each accounts}}
+        <div class="account-details">
+            <div class="data-row">
+                <div class="data-label">ФИО</div>
+                <div class="data-value">{{this.surname}} {{this.name}} {{this.patronymic}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Дебет</div>
+                <div class="data-value mono">{{this.debit}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Кредит</div>
+                <div class="data-value mono">{{this.credit}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Сальдо</div>
+                <div class="data-value mono">{{this.balance}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Тип</div>
+                <div class="data-value">{{this.type}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Номер счёта</div>
+                <div class="data-value mono">{{this.balanceNo}}-{{this.clientNo}}-{{this.accountNo}}-{{this.controlNo}}</div>
+            </div>
+        </div>
+        {{/each}}
+    {{else}}
+        <div>No accounts :/</div>
+    {{/if}}
+</div>

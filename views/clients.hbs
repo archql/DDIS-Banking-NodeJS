@@ -1,0 +1,95 @@
+<h2 style="text-align: center">Клиенты</h2>
+<div class="clients-data">
+    {{#if clients}}
+    {{#each clients}}
+        <div class="client-data">
+            <div class="data-row">
+                <div class="data-label">ID</div>
+                <div class="data-value">{{this.id}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Фамилия:</div>
+                <div class="data-value">{{this.surname}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Имя:</div>
+                <div class="data-value">{{this.name}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Отчество:</div>
+                <div class="data-value">{{this.patronymic}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Дата рождения:</div>
+                <div class="data-value">{{this.birthdate}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Серия паспорта:</div>
+                <div class="data-value mono">{{this.passportSeries}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">№ паспорта:</div>
+                <div class="data-value mono">{{this.passportNumber}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Кем выдан:</div>
+                <div class="data-value">{{this.issuedBy}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Дата выдачи:</div>
+                <div class="data-value">{{this.issueDate}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Идент. номер:</div>
+                <div class="data-value mono">{{this.identificationNumber}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Место рождения:</div>
+                <div class="data-value">{{this.placeOfBirth}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Город факт. проживания:</div>
+                <div class="data-value">{{this.residenceCity}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Адрес факт. проживания:</div>
+                <div class="data-value">{{this.residenceAddress}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Телефон дом:</div>
+                <div class="data-value">{{this.homePhone}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Телефон моб:</div>
+                <div class="data-value">{{this.mobilePhone}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">E-mail:</div>
+                <div class="data-value">{{this.email}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Семейное положение:</div>
+                <div class="data-value">{{this.maritalStatus}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Гражданство:</div>
+                <div class="data-value">{{this.citizenship}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Инвалидность:</div>
+                <div class="data-value">{{this.disability}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Пенсионер:</div>
+                <div class="data-value">{{this.pensioner}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Ежемесячный доход (BYN):</div>
+                <div class="data-value mono">{{this.monthlyIncome}}</div>
+            </div>
+        </div>
+    {{/each}}
+    {{else}}
+        <div>No clients :/</div>
+    {{/if}}
+</div>

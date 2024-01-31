@@ -39,6 +39,89 @@ const server = http.createServer(app);
 app.get('/',(req,res) => {
     res.render('main.hbs', {layout : 'index'});
 });
+app.get('/add_client',(req,res) => {
+    res.render('add_client.hbs', {layout : 'index'});
+});
+app.post('/add_client', (req, res) => {
+    // Retrieve form data from request body
+    const formData = req.body;
+    console.log(req.body);
+
+    // Process the form data as needed
+    // For example, you can access formData.mobilePhone, formData.surname, etc.
+
+    // Send a response back to the client
+    //res.status(200).send('Form submitted successfully!');
+    res.render('add_client.hbs', {layout : 'index', error: false});
+});
+
+app.get('/deposit',(req,res) => {
+    res.render('deposit.hbs', {layout : 'index'});
+});
+app.post('/deposit',(req,res) => {
+    const formData = req.body;
+    console.log(req.body);
+    res.render('deposit.hbs', {layout : 'index', error: false});
+});
+app.get('/credit',(req,res) => {
+    res.render('credit.hbs', {layout : 'index'});
+});
+app.post('/credit',(req,res) => {
+    const formData = req.body;
+    console.log(req.body);
+    res.render('credit.hbs', {layout : 'index', error: false});
+});
+
+app.get('/accounts',(req,res) => {
+    res.render('accounts.hbs', {
+        layout : 'index',
+        accounts: [
+            {
+                "surname": "Иванов",
+                "name": "Иван",
+                "patronymic": "Иванович",
+                "debit": "1000",
+                "credit": "500",
+                "balance": "500",
+                "type": "Active",
+                "balanceNo": "XXXX",
+                "clientNo": "00001",
+                "accountNo": "001",
+                "controlNo": "X"
+            }
+        ]});
+});
+app.get('/clients',(req,res) => {
+    res.render('clients.hbs', {
+        layout : 'index',
+        clients: [
+    {
+        "surname": "Иванов",
+        "name": "Иван",
+        "patronymic": "Иванович",
+        "birthdate": "01.01.1990",
+        "gender": "Мужской",
+        "passportSeries": "AB",
+        "passportNumber": "123456",
+        "issuedBy": "Отделом УФМС России",
+        "issueDate": "10.05.2015",
+        "identificationNumber": "12345678901234567890",
+        "placeOfBirth": "Москва",
+        "residenceCity": "Москва",
+        "residenceAddress": "ул. Пушкина, д. 10, кв. 5",
+        "homePhone": "+7 (123) 456-78-90",
+        "mobilePhone": "+7 (987) 654-32-10",
+        "email": "ivanov@example.com",
+        "registrationCity": "Москва",
+        "maritalStatus": "Женат",
+        "citizenship": "Россия",
+        "disability": "Нет",
+        "pensioner": "Нет",
+        "monthlyIncome": "1500"
+    }
+        ]
+    });
+});
 
 // 404
 app.all('*', function(req, res){

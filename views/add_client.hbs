@@ -1,0 +1,153 @@
+<h2 style="text-align: center">Форма регистрации клиента</h2>
+<form action="/add_client" method="POST">
+    <div class="form-group">
+        <label for="surname" class="required">Фамилия</label>
+        <input type="text" id="surname" name="surname" pattern="[а-яА-Яa-zA-Z ]+" required>
+        <label for="name" class="required">Имя</label>
+        <input type="text" id="name" name="name" pattern="[а-яА-Яa-zA-Z ]+" required>
+        <label for="patronymic" class="required">Отчество</label>
+        <input type="text" id="patronymic" name="patronymic" pattern="[а-яА-Яa-zA-Z ]+" required>
+    </div>
+
+<!--    <div class="form-group">-->
+<!--        <label class="required">Пол</label>-->
+<!--        <input type="radio" id="male" name="gender" value="male" required>-->
+<!--        <label for="male">Мужской</label>-->
+<!--        <input type="radio" id="female" name="gender" value="female">-->
+<!--        <label for="female">Женский</label>-->
+<!--    </div>-->
+
+    <div class="form-group">
+        <label for="birthdate" class="required">Дата рождения</label>
+        <input type="date" id="birthdate" name="birthdate" required>
+    </div>
+
+    <div class="form-group">
+        <label for="passportSeries" class="required">Серия паспорта</label>
+        <input type="text" id="passportSeries" name="passportSeries" pattern="[A-Z]{2}" required>
+        <label for="passportNumber" class="required">№ паспорта</label>
+        <input type="text" id="passportNumber" name="passportNumber" pattern="[0-9]+" required>
+    </div>
+
+    <div class="form-group">
+        <label for="issuedBy" class="required">Кем выдан</label>
+        <input type="text" id="issuedBy" name="issuedBy" pattern="[а-яА-Яa-zA-Z ]+" required>
+        <label for="issueDate" class="required">Дата выдачи</label>
+        <input type="date" id="issueDate" name="issueDate" required>
+    </div>
+
+    <div class="form-group">
+        <label for="identificationNumber" class="required">Идент. номер</label>
+        <input type="text" id="identificationNumber" name="identificationNumber" pattern="[0-9A-Z]+" required>
+        <label for="placeOfBirth" class="required">Место рождения</label>
+        <input type="text" id="placeOfBirth" name="placeOfBirth" required>
+    </div>
+
+    <div class="form-group">
+        <label for="residenceCity" class="required">Город факт. проживания</label>
+        <select id="residenceCity" name="residenceCity" required>
+            <option value="">Выберите город</option>
+            <option value="city1">Город 1</option>
+            <option value="city2">Город 2</option>
+            <option value="city3">Город 3</option>
+            <option value="city4">Город 4</option>
+            <option value="city5">Город 5</option>
+        </select>
+        <label for="residenceAddress" class="required">Адрес факт. проживания</label>
+        <input type="text" id="residenceAddress" name="residenceAddress" required>
+    </div>
+
+    <div class="form-group">
+        <label for="homePhone">Телефон дом</label>
+        <input type="tel" id="homePhone" name="homePhone" pattern="[+]?[0-9()-]+">
+        <label for="mobilePhone">Телефон моб</label>
+        <input type="tel" id="mobilePhone" name="mobilePhone" pattern="[+]?[0-9()-]+">
+    </div>
+
+    <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email">
+    </div>
+
+    <div class="form-group">
+        <label for="workPlace">Место работы</label>
+        <input type="text" id="workPlace" name="workPlace">
+        <label for="position">Должность</label>
+        <input type="text" id="position" name="position">
+    </div>
+
+<!--    <div class="form-group">-->
+<!--        <label for="registrationCity">Город прописки</label>-->
+<!--        <select id="registrationCity" name="registrationCity" required>-->
+<!--            <option value="">Выберите город</option>-->
+<!--            <option value="city1">Город 1</option>-->
+<!--            <option value="city2">Город 2</option>-->
+<!--            <option value="city3">Город 3</option>-->
+<!--            <option value="city4">Город 4</option>-->
+<!--            <option value="city5">Город 5</option>-->
+<!--        </select>-->
+<!--        <label for="registrationAddress">Адрес прописки</label>-->
+<!--        <input type="text" id="registrationAddress" name="registrationAddress">-->
+<!--    </div>-->
+
+    <div class="form-group">
+        <label for="maritalStatus" class="required">Семейное положение</label>
+        <select id="maritalStatus" name="maritalStatus" required>
+            <option value="">Выберите семейное положение</option>
+            <option value="single">Холост/Не замужем</option>
+            <option value="married">Женат/Замужем</option>
+            <option value="divorced">Разведен/Разведена</option>
+            <option value="widowed">Вдовец/Вдова</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="citizenship" class="required">Гражданство</label>
+        <select id="citizenship" name="citizenship" required>
+            <option value="">Выберите гражданство</option>
+            <option value="citizenship1">Гражданство 1</option>
+            <option value="citizenship2">Гражданство 2</option>
+            <option value="citizenship3">Гражданство 3</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="disability" class="required">Инвалидность</label>
+        <input type="radio" id="disability_yes" name="disability" value="true" required>
+        <label for="disability_yes">Да</label>
+        <input type="radio" id="disability_no" name="disability" value="false">
+        <label for="disability_no">Нет</label>
+        <label for="pensioner" class="required">Пенсионер</label>
+        <input type="radio" id="pensioner_yes" name="pensioner" value="true" required>
+        <label for="pensioner_yes">Да</label>
+        <input type="radio" id="pensioner_no" name="pensioner" value="false">
+        <label for="pensioner_no">Нет</label>
+    </div>
+
+    <div class="form-group" class="required">
+        <label for="monthlyIncome">Ежемесячный доход (BYN)</label>
+        <input type="text" id="monthlyIncome" name="monthlyIncome" pattern="[0-9\. ]+">
+    </div>
+
+    <div class="form-group">
+        <label for="militaryService" class="required">Военнообязанный</label>
+        <input type="radio" id="militaryService_yes" name="militaryService" value="true" required>
+        <label for="militaryService_yes">Да</label>
+        <input type="radio" id="militaryService_no" name="militaryService" value="false">
+        <label for="militaryService_no">Нет</label>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Отправить" class="btn">
+    </div>
+</form>
+{{#if (ifdef error)}}
+<div id="notification-panel">
+    {{#if (not error) }}
+        <h4 style="color: green">User add success :)</h4>
+    {{else}}
+        <h4 style="color: red">User add failure :(</h4>
+    {{/if}}
+</div>
+{{/if}}
+<script src="notification.js"></script>
