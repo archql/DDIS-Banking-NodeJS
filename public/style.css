@@ -1,0 +1,247 @@
+body {
+    background: paleturquoise;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* main container */
+.container {
+    margin-right: auto;
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    /* it is flex max-width */
+    max-width: 60rem;
+    width: 100%;
+}
+.flex_spread {
+    /* spread container */
+    flex: 1 1 auto;
+}
+.card {
+    background-color: white;
+    border-radius: 25px;
+    margin-top: 10px;
+    padding: 10px;
+    box-shadow: 10px 5px 5px cadetblue;
+    font-family: cursive;
+    display: flex;
+    flex-direction: column;
+}
+.box {
+    isolation: isolate;
+    background: white;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 2px 2px 20px rgba(0.0, 0.5, 0.5, 0.1);
+}
+
+.messages_grid {
+    grid-template-columns: 4fr 6fr;
+    grid-template-rows: max-content auto max-content;
+    display: grid;
+    justify-items: stretch;
+    border-radius: 10px;
+    grid-gap: 1px;
+    outline: 1px solid cadetblue;
+    background-color: cadetblue;
+
+    min-height: 0;
+    flex: 1 1 0;
+}
+.card .messaging {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.card .messaging > :first-child {
+    margin-top: auto
+}
+.card .new_message {
+    margin-top: auto;
+}
+.card .message {
+    max-width: 60%;
+    border-radius: 10px;
+    margin-top: 10px;
+    padding: 5px;
+    box-shadow: 5px 2px 2px cadetblue;
+}
+.card .message_in {
+    margin-right: auto;
+    margin-left: 10px;
+    background-color: whitesmoke;
+}
+.card .message_out {
+    margin-left: auto;
+    margin-right: 10px;
+    background-color: lightblue;
+}
+.card .message .attachments {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+.card .message .attachment {
+    width: 50%;
+    outline: black solid 1px;
+    object-fit: cover;
+}
+.card .message .attachment:first-child {
+    width: 100%
+}
+.card .message .attachment:nth-child(n + 2) { /*last-child:nth-child(even)*/
+    height: 100px
+}
+.card .message .attachment:nth-child(even):last-child {
+    width: 100%;
+}
+.card .message .attachment:nth-child(n + 4) {
+    width: 50%
+}
+
+.card .user_list {
+    overflow-y: auto;
+}
+.user_list .user {
+    font-size: larger;
+    border-bottom: 1px black solid;
+}
+.user_list .user:hover {
+    color: cadetblue;
+}
+.user_list .user.active {
+    background: whitesmoke;
+    color: teal;
+    font-style: italic;
+}
+
+#message_content {
+    resize: none;
+    outline: none;
+    overflow-y: auto;
+}
+.message_input_form {
+    display: flex;
+    align-items: center;
+}
+
+
+
+
+.top_left {
+    border-top-left-radius: 10px;
+}
+.top_right {
+    border-top-right-radius: 10px;
+}
+.bottom_left {
+    border-bottom-left-radius: 10px;
+}
+.bottom_right {
+    border-bottom-right-radius: 10px;
+}
+.box.top {
+    background: cadetblue;
+    color: white;
+    font-size: large;
+    box-shadow: none;
+}
+
+
+/*
+main ul (DUPLICATION)
+ */
+.main_nav_ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: CadetBlue;
+    position: sticky;
+}
+
+.main_nav_ul li {
+    float: left;
+}
+
+.main_nav_ul li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+.main_nav_ul a:hover {
+    background-color: Teal;
+}
+.main_nav_ul .active {
+    background-color: #04AA6D;
+}
+.user_info {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+}
+.user_card {
+    flex-direction: row;
+}
+.user_image {
+    height: 100%;
+}
+.user_name {
+    font-size: xx-large;
+    border-bottom: black;
+}
+.user_role {
+    border-radius: 10px;
+    padding: 5px;
+}
+
+/*
+scrollbar
+ */
+.messaging::-webkit-scrollbar {
+    width: 6px;               /* width of the entire scrollbar */
+}
+.messaging::-webkit-scrollbar-track {
+    background: ghostwhite;        /* color of the tracking area */
+}
+.messaging::-webkit-scrollbar-thumb {
+    background-color: gray;    /* color of the scroll thumb */
+    border-radius: 4px;       /* roundness of the scroll thumb */
+    /*border: 3px solid CadetBlue;  /* creates padding around scroll thumb */
+}
+
+.user_list::-webkit-scrollbar {
+    width: 6px;               /* width of the entire scrollbar */
+}
+.user_list::-webkit-scrollbar-track {
+    background: ghostwhite;        /* color of the tracking area */
+}
+.user_list::-webkit-scrollbar-thumb {
+    background-color: gray;    /* color of the scroll thumb */
+    border-radius: 4px;       /* roundness of the scroll thumb */
+    /*border: 3px solid CadetBlue;  /* creates padding around scroll thumb */
+}
+
+#message_content::-webkit-scrollbar {
+    width: 6px;               /* width of the entire scrollbar */
+}
+#message_content::-webkit-scrollbar-track {
+    background: ghostwhite;        /* color of the tracking area */
+}
+#message_content::-webkit-scrollbar-thumb {
+    background-color: gray;    /* color of the scroll thumb */
+    border-radius: 4px;       /* roundness of the scroll thumb */
+    /*border: 3px solid CadetBlue;  /* creates padding around scroll thumb */
+}
