@@ -1,6 +1,41 @@
 <h2 style="text-align: center">Форма заключения договора кредитования</h2>
 <form action="/credit" method="POST">
-
+    <div class="form-group">
+        Важно. Кредиты предоставляются только в валюте BYN под 14% годовых
+    </div>
+    <div class="form-group">
+        <label for="contractNumber" class="required">Номер договора</label>
+        <input type="text" id="contractNumber" name="contractNumber" required>
+    </div>
+    <div class="form-group">
+        <label for="creditAmount" class="required">Сумма кредита (от 200 до 20000)</label>
+        <input type="number" id="creditAmount" name="creditAmount" min="200" max="20000" required>
+    </div>
+    <div class="form-group">
+        <label for="interestRate" class="required">Срок кредита</label>
+        <select id="interestRate" name="interestRate" required>
+            <option value="">Выберите срок кредита</option>
+            <option value="12">12 месяцев</option>
+            <option value="24">24 месяцев</option>
+            <option value="36">36 месяцев</option>
+            <option value="48">48 месяцев</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="interest">Предполагаемые выплаты в месяц</label>
+        <div id="interest" name="interest">
+            Нет
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="interestFull">Полная сумма выплат</label>
+        <div id="interestFull" name="interestFull">
+            Нет
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Заключить договор" class="btn">
+    </div>
 </form>
 {{#if (ifdef error)}}
     <div id="notification-panel">
@@ -12,3 +47,29 @@
     </div>
 {{/if}}
 <script src="notification.js"></script>
+<script>
+    const interestDiv = document.getElementById('interest');
+    const interestFullDiv = document.getElementById('interestFull');
+    const creditAmountInput = document.getElementById('creditAmount');
+    const interestRateSelect = document.getElementById('interestRate');
+
+    creditAmountInput.addEventListener('input', changedInterestRate);
+    interestRateSelect.addEventListener('change', changedInterestRate);
+
+    function  changedInterestRate() {
+        const m = parseFloat(interestRateSelect.value);
+        const s = parseFloat(creditAmountInput.value);
+        if (s && m &&
+                s >= 200 && s <= 20000)
+        {
+            // Sе = S*P /12*(1+P/12)N/((1+P/12)N -1), аннуитет
+            // ДП = ОЗ / КП+ ОЗ х МС Дифференциальная  https://www.lockobank.ru/articles/kredity/raschet-ezhemesyachnogo-platezha-po-kreditu/
+            const monthly = s*0.14/ 12 * Math.pow(1+0.14/ 12, m) / (Math.pow(1+0.14/ 12, m) - 1)
+            interestDiv.innerHTML = `${(monthly).toFixed(2)} BYN`
+            interestFullDiv.innerHTML = `${(monthly * m).toFixed(2)} BYN`
+        } else {
+            interestDiv.innerHTML = 'Нет';
+            interestFullDiv.innerHTML = 'Нет'
+        }
+    }
+</script>
