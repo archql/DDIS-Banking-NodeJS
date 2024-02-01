@@ -126,7 +126,7 @@ app.get('/deposit',(req,res) => {
 });
 app.post('/deposit',(req,res) => {
     const formData = req.body;
-    console.log(req.body);
+    console.log(formData);
     res.render('deposit.hbs', {layout : 'index', error: false});
 });
 app.get('/credit',(req,res) => {

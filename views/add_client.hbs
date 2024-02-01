@@ -2,11 +2,11 @@
 <form action="/add_client" method="POST">
     <div class="form-group">
         <label for="surname" class="required">Фамилия</label>
-        <input type="text" id="surname" name="surname" pattern="[а-яА-Яa-zA-Z ]+" required>
+        <input type="text" id="surname" name="surname" pattern="[А-ЯA-Z][а-яА-Яa-zA-Z ]*" required>
         <label for="name" class="required">Имя</label>
-        <input type="text" id="name" name="name" pattern="[а-яА-Яa-zA-Z ]+" required>
+        <input type="text" id="name" name="name" pattern="[А-ЯA-Z][а-яА-Яa-zA-Z ]*" required>
         <label for="patronymic" class="required">Отчество</label>
-        <input type="text" id="patronymic" name="patronymic" pattern="[а-яА-Яa-zA-Z ]+" required>
+        <input type="text" id="patronymic" name="patronymic" pattern="[А-ЯA-Z][а-яА-Яa-zA-Z ]*" required>
     </div>
 
 <!--    <div class="form-group">-->
@@ -31,7 +31,7 @@
 
     <div class="form-group">
         <label for="issuedBy" class="required">Кем выдан</label>
-        <input type="text" id="issuedBy" name="issuedBy" pattern="[а-яА-Яa-zA-Z ]+" required>
+        <input type="text" id="issuedBy" name="issuedBy" pattern="[А-ЯA-Z][а-яА-Яa-zA-Z ]*" required>
         <label for="issueDate" class="required">Дата выдачи</label>
         <input type="date" id="issueDate" name="issueDate" required>
     </div>
@@ -47,11 +47,11 @@
         <label for="residenceCity" class="required">Город факт. проживания</label>
         <select id="residenceCity" name="residenceCity" required>
             <option value="">Выберите город</option>
-            <option value="city1">Город 1</option>
-            <option value="city2">Город 2</option>
-            <option value="city3">Город 3</option>
-            <option value="city4">Город 4</option>
-            <option value="city5">Город 5</option>
+            <option value="1">Город 1</option>
+            <option value="2">Город 2</option>
+            <option value="3">Город 3</option>
+            <option value="4">Город 4</option>
+            <option value="5">Город 5</option>
         </select>
         <label for="residenceAddress" class="required">Адрес факт. проживания</label>
         <input type="text" id="residenceAddress" name="residenceAddress" required>
@@ -105,9 +105,9 @@
         <label for="citizenship" class="required">Гражданство</label>
         <select id="citizenship" name="citizenship" required>
             <option value="">Выберите гражданство</option>
-            <option value="citizenship1">Гражданство 1</option>
-            <option value="citizenship2">Гражданство 2</option>
-            <option value="citizenship3">Гражданство 3</option>
+            <option value="1">Гражданство 1</option>
+            <option value="2">Гражданство 2</option>
+            <option value="3">Гражданство 3</option>
         </select>
     </div>
 
@@ -124,7 +124,7 @@
         <label for="pensioner_no">Нет</label>
     </div>
 
-    <div class="form-group" class="required">
+    <div class="form-group">
         <label for="monthlyIncome">Ежемесячный доход (BYN)</label>
         <input type="text" id="monthlyIncome" name="monthlyIncome" pattern="[0-9\. ]+">
     </div>

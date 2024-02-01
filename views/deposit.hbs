@@ -1,6 +1,51 @@
 <h2 style="text-align: center">Форма заключения договора депозита</h2>
-<form action="/deposit" method="POST">
-
+<form action="/deposit" method="POST" class="max-width">
+    <div class="form-group">
+        <label for="contractNumber" class="required">Номер договора</label>
+        <input type="text" id="contractNumber" name="contractNumber" required>
+    </div>
+    <div class="form-group">
+        <label for="depositType" class="required">Тип вклада</label>
+        <select id="depositType" name="depositType" required>
+            <option value="">Выберите тип вклада</option>
+            <option value="revocable">Отзывной</option>
+            <option value="irrevocable">Безотзывной</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="currencyType" class="required">Валюта вклада</label>
+        <select id="currencyType" name="currencyType" required>
+            <option value="">Выберите валюту вклада</option>
+            <option value="BYN">Беларусский рубль (BYN)</option>
+            <option value="RUB">Российский рубль рубль (RUB)</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="depositAmount" class="required">Сумма вклада</label>
+        <input type="number" id="depositAmount" name="depositAmount" min="200" max="200000" required>
+    </div>
+    <div class="form-group">
+        <label for="interestRate" class="required">Срок вклада и процент по вкладу</label>
+        <select id="interestRate" name="interestRate" required disabled>
+            <option value="">Выберите срок вклада и процент по нему</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="interest">Предполагаемый доход</label>
+        <div id="interest" name="interest">
+            Нет
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Заключить договор" class="btn">
+    </div>
+<!--    <div class="form-group">-->
+<!--        <label for="interestCapitalization" class="required">Капитализация процентов</label>-->
+<!--        <input type="radio" id="yes" name="interestCapitalization" value="y" required>-->
+<!--        <label for="yes">Да</label>-->
+<!--        <input type="radio" id="no" name="interestCapitalization" value="n">-->
+<!--        <label for="no">Нет</label>-->
+<!--    </div>-->
 </form>
 {{#if (ifdef error)}}
     <div id="notification-panel">
@@ -12,3 +57,80 @@
     </div>
 {{/if}}
 <script src="notification.js"></script>
+<script>
+    const depositTypeSelect = document.getElementById('depositType');
+    const currencyTypeSelect = document.getElementById('currencyType');
+    const interestRateSelect = document.getElementById('interestRate');
+    const interestDiv = document.getElementById('interest');
+    const depositAmountInput = document.getElementById('depositAmount');
+
+    depositTypeSelect.addEventListener('change', toggleInterestRate);
+    currencyTypeSelect.addEventListener('change', toggleInterestRate);
+
+    interestRateSelect.addEventListener('change', changedInterestRate);
+    depositAmountInput.addEventListener('input', changedInterestRate);
+
+    const revocableOptionsBYN = [
+        { value: 3 * 3 / 12, label: '3% годовых на 3 месяца' },
+        { value: 4.1 * 5 / 12, label: '4,1% годовых на 5 месяцев' },
+        { value: 5 * 7 / 12, label: '5% годовых на 7 месяцев' },
+        { value: 5 * 9 / 12, label: '5% годовых на 9 месяцев' },
+        { value: 10 * 12 / 12, label: '10% годовых на 12 месяцев' }
+    ];
+
+    const irrevocableOptionsBYN = [
+        { value: 8.5 * 2 / 12, label: '8,5% годовых на 2 месяца' },
+        { value: 10.8 * 3 / 12, label: '10,8% годовых на 3 месяца' },
+        { value: 11.3 * 5 / 12, label: '11,3% годовых на 5 месяцев' },
+        { value: 11.8 * 7 / 12, label: '11.8% годовых на 7 месяцев' },
+        { value: 12.0 * 9 / 12, label: '12% годовых на 9 месяцев' },
+        { value: 13.5 * 13 / 12, label: '13,5% годовых на 13 месяцев' }
+    ];
+
+    const irrevocableOptionsRUB = [
+        { value: 3 * 3 / 12, label: '3% годовых на 3 месяца' },
+        { value: 4 * 7 / 12, label: '4% годовых на 7 месяцев' },
+        { value: 5 * 13 / 12, label: '5% годовых на 13 месяцев' },
+        { value: 5 * 24 / 12, label: '5% годовых на 24 месяца' }
+    ];
+
+    function toggleInterestRate() {
+        const depositType = depositTypeSelect.value;
+        const currencyType = currencyTypeSelect.value;
+        const enableInterestRate = (depositType && currencyType);
+
+        interestRateSelect.disabled = !enableInterestRate;
+
+        let options = []
+        if (depositType === 'revocable' && currencyType === 'BYN') {
+            options = revocableOptionsBYN;
+        } else if (depositType === 'irrevocable' && currencyType === 'BYN') {
+            options = irrevocableOptionsBYN;
+        } else if (depositType === 'irrevocable' && currencyType === 'RUB') {
+            options = irrevocableOptionsRUB;
+        }
+        // Удалить все текущие опции
+        interestRateSelect.innerHTML = '<option value="">Выберите срок вклада и процент по нему</option>';
+
+        // Добавить новые опции
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option.value;
+            optionElement.textContent = option.label;
+            interestRateSelect.appendChild(optionElement);
+        });
+        changedInterestRate();
+    }
+
+    function  changedInterestRate() {
+        const interestValue = parseFloat(interestRateSelect.value);
+        const depositAmountValue = parseFloat(depositAmountInput.value);
+        const currencyType = currencyTypeSelect.value;
+        if (interestValue && depositAmountValue && currencyType &&
+                depositAmountValue >= 200 && depositAmountValue <= 200000) {
+            interestDiv.innerHTML = `${(interestValue * depositAmountValue * 0.01).toFixed(2)} ${currencyType}`
+        } else {
+            interestDiv.innerHTML = 'Нет';
+        }
+    }
+</script>
