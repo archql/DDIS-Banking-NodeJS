@@ -1,6 +1,8 @@
 // Find all elements with class 'delete'
 const deleteButtons = document.querySelectorAll('.delete');
 
+const editButtons = document.querySelectorAll('.edit');
+
 // Loop through each delete button and add event listener
 deleteButtons.forEach(button => {
     button.addEventListener('click', function() {
@@ -33,3 +35,14 @@ deleteButtons.forEach(button => {
             });
     });
 });
+
+editButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        //
+        const id = button.dataset.id;
+        // Handle delete button click event
+        console.log(`Edit button clicked! ${id}`);
+        //
+        window.location.href = `/edit_client/${id}`
+    });
+})

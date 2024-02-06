@@ -42,12 +42,12 @@ const clients: any[] = [
         "surname": "Иванов",
         "name": "Иван",
         "patronymic": "Иванович",
-        "birthdate": "01.01.1990",
+        "birthdate": "1990-01-01",
         "gender": "Мужской",
         "passportSeries": "AB",
         "passportNumber": "123456",
         "issuedBy": "Отделом УФМС России",
-        "issueDate": "10.05.2015",
+        "issueDate": "2015-10-05",
         "identificationNumber": "12345678901234567890",
         "placeOfBirth": "Москва",
         "residenceCity": "Москва",
@@ -56,36 +56,10 @@ const clients: any[] = [
         "mobilePhone": "+7 (987) 654-32-10",
         "email": "ivanov@example.com",
         "registrationCity": "Москва",
-        "maritalStatus": "Женат",
+        "maritalStatus": "single",
         "citizenship": "Россия",
-        "disability": "Нет",
-        "pensioner": "Нет",
-        "monthlyIncome": "1500",
-        "militaryService": "y"
-    },
-    {
-        "id": "2",
-        "surname": "Петров",
-        "name": "Иван",
-        "patronymic": "Иванович",
-        "birthdate": "01.01.1990",
-        "gender": "Мужской",
-        "passportSeries": "AB",
-        "passportNumber": "123456",
-        "issuedBy": "Отделом УФМС России",
-        "issueDate": "10.05.2015",
-        "identificationNumber": "12345678901234567890",
-        "placeOfBirth": "Москва",
-        "residenceCity": "Москва",
-        "residenceAddress": "ул. Пушкина, д. 10, кв. 5",
-        "homePhone": "+7 (123) 456-78-90",
-        "mobilePhone": "+7 (987) 654-32-10",
-        "email": "ivanov@example.com",
-        "registrationCity": "Москва",
-        "maritalStatus": "Женат",
-        "citizenship": "Россия",
-        "disability": "Нет",
-        "pensioner": "Нет",
+        "disability": "n",
+        "pensioner": "n",
         "monthlyIncome": "1500",
         "militaryService": "y"
     }
@@ -118,7 +92,7 @@ app.post('/add_client', (req, res) => {
 
     // Send a response back to the client
     //res.status(200).send('Form submitted successfully!');
-    res.render('add_client.hbs', {layout : 'index', error: false});
+    res.render('add_client.hbs', {layout : 'index', error: false, client: formData});
 });
 
 app.get('/deposit',(req,res) => {
@@ -186,6 +160,33 @@ app.delete('/clients/:id', (req, res) => {
         res.status(404).json({ error: `Client with ID ${id} not found` });
     }
 });
+app.get('/edit_client/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    console.log(`client edit request ${id}`)
+    // get client data by id
+    const client = clients[id - 1]
+
+    if (!client) {
+        return res.status(404).render('404.hbs', {layout : 'index'});
+    }
+
+    res.render('add_client.hbs', {
+        layout : 'index',
+        client: client
+    });
+});
+app.post('/edit_client/:id', (req, res) => {
+        const id = parseInt(req.params.id);
+        console.log(`client fuck request ${id}`)
+        // get client data by id
+        const client = Object.assign({}, req.body);
+        client.id = id // >??????
+        // if success
+        clients[id-1] = client
+        //res.redirect(`/clients`);
+        res.render('add_client.hbs', {layout : 'index', error: false, client: client});
+    }
+);
 
 // 404
 app.all('*', function(req, res){

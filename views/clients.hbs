@@ -6,6 +6,9 @@
             <div class="btn delete float" data-id="{{this.id}}">
                 Delete
             </div>
+            <div class="btn edit float" data-id="{{this.id}}">
+                Edit
+            </div>
             <div class="data-row">
                 <div class="data-label">ID</div>
                 <div class="data-value">{{this.id}}</div>
@@ -90,10 +93,14 @@
                 <div class="data-label">Ежемесячный доход (BYN):</div>
                 <div class="data-value mono">{{this.monthlyIncome}}</div>
             </div>
+            <div class="data-row">
+                <div class="data-label">Военно обязанный:</div>
+                <div class="data-value">{{this.militaryService}}</div>
+            </div>
         </div>
     {{/each}}
     {{else}}
         <div>No clients :/</div>
     {{/if}}
 </div>
-<script src="delete_client.js"></script>
+<script src="/delete_client.js"></script>

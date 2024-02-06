@@ -247,6 +247,7 @@ form {
 
 .form-group input[type="text"],
 .form-group input[type="date"],
+.form-group input[type="number"],
 .form-group select,
 .form-group input[type="tel"],
 .form-group input[type="email"],
@@ -292,6 +293,9 @@ form {
     right: 5px; /* Adjust as needed */
     width: auto;
     height: auto;
+}
+.float.edit {
+    top: 55px;
 }
 
 .error-message {

@@ -1,12 +1,19 @@
-<h2 style="text-align: center">Форма регистрации клиента</h2>
-<form action="/add_client" method="POST">
+<h2 style="text-align: center">Форма {{#if (ifdef client)}}редактирования{{else}}регистрации{{/if}} клиента</h2>
+
+<form method="POST">
+    {{#if (ifdef client)}}
+    <div class="form-group">
+        <label for="id">ID</label>
+        <input id="id" type="text" disabled name="id" value="{{client.id}}">
+    </div>
+    {{/if}}
     <div class="form-group">
         <label for="surname" class="required">Фамилия</label>
-        <input type="text" id="surname" name="surname" pattern="[А-ЯA-Z][а-яА-Яa-zA-Z ]*" required>
+        <input value="{{client.surname}}" type="text" id="surname" name="surname" pattern="[А-ЯA-Z][а-яА-Яa-zA-Z ]*" required>
         <label for="name" class="required">Имя</label>
-        <input type="text" id="name" name="name" pattern="[А-ЯA-Z][а-яА-Яa-zA-Z ]*" required>
+        <input value="{{client.name}}" type="text" id="name" name="name" pattern="[А-ЯA-Z][а-яА-Яa-zA-Z ]*" required>
         <label for="patronymic" class="required">Отчество</label>
-        <input type="text" id="patronymic" name="patronymic" pattern="[А-ЯA-Z][а-яА-Яa-zA-Z ]*" required>
+        <input value="{{client.patronymic}}" type="text" id="patronymic" name="patronymic" pattern="[А-ЯA-Z][а-яА-Яa-zA-Z ]*" required>
     </div>
 
 <!--    <div class="form-group">-->
@@ -19,61 +26,61 @@
 
     <div class="form-group">
         <label for="birthdate" class="required">Дата рождения</label>
-        <input type="date" id="birthdate" name="birthdate" required>
+        <input value="{{client.birthdate}}" type="date" id="birthdate" name="birthdate" required>
     </div>
 
     <div class="form-group">
         <label for="passportSeries" class="required">Серия паспорта</label>
-        <input type="text" id="passportSeries" name="passportSeries" pattern="[A-Z]{2}" required>
+        <input value="{{client.passportSeries}}" type="text" id="passportSeries" name="passportSeries" pattern="[A-Z]{2}" required>
         <label for="passportNumber" class="required">№ паспорта</label>
-        <input type="text" id="passportNumber" name="passportNumber" pattern="[0-9]+" required>
+        <input value="{{client.passportNumber}}" type="text" id="passportNumber" name="passportNumber" pattern="[0-9]+" required>
     </div>
 
     <div class="form-group">
         <label for="issuedBy" class="required">Кем выдан</label>
-        <input type="text" id="issuedBy" name="issuedBy" pattern="[А-ЯA-Z][а-яА-Яa-zA-Z ]*" required>
+        <input value="{{client.issuedBy}}" type="text" id="issuedBy" name="issuedBy" pattern="[А-ЯA-Z][а-яА-Яa-zA-Z ]*" required>
         <label for="issueDate" class="required">Дата выдачи</label>
-        <input type="date" id="issueDate" name="issueDate" required>
+        <input value="{{client.issueDate}}" type="date" id="issueDate" name="issueDate" required>
     </div>
 
     <div class="form-group">
         <label for="identificationNumber" class="required">Идент. номер</label>
-        <input type="text" id="identificationNumber" name="identificationNumber" pattern="[0-9A-Z]+" required>
+        <input value="{{client.identificationNumber}}" type="text" id="identificationNumber" name="identificationNumber" pattern="[0-9A-Z]+" required>
         <label for="placeOfBirth" class="required">Место рождения</label>
-        <input type="text" id="placeOfBirth" name="placeOfBirth" required>
+        <input value="{{client.placeOfBirth}}" type="text" id="placeOfBirth" name="placeOfBirth" required>
     </div>
 
     <div class="form-group">
         <label for="residenceCity" class="required">Город факт. проживания</label>
         <select id="residenceCity" name="residenceCity" required>
             <option value="">Выберите город</option>
-            <option value="1">Город 1</option>
-            <option value="2">Город 2</option>
-            <option value="3">Город 3</option>
-            <option value="4">Город 4</option>
-            <option value="5">Город 5</option>
+            <option value="1" {{#if (eq client.residenceCity '1')}}selected{{/if}}>Город 1</option>
+            <option value="2" {{#if (eq client.residenceCity '2')}}selected{{/if}}>Город 2</option>
+            <option value="3" {{#if (eq client.residenceCity '3')}}selected{{/if}}>Город 3</option>
+            <option value="4" {{#if (eq client.residenceCity '4')}}selected{{/if}}>Город 4</option>
+            <option value="5" {{#if (eq client.residenceCity '5')}}selected{{/if}}>Город 5</option>
         </select>
         <label for="residenceAddress" class="required">Адрес факт. проживания</label>
-        <input type="text" id="residenceAddress" name="residenceAddress" required>
+        <input value="{{client.residenceAddress}}" type="text" id="residenceAddress" name="residenceAddress" required>
     </div>
 
     <div class="form-group">
         <label for="homePhone">Телефон дом</label>
-        <input type="tel" id="homePhone" name="homePhone" pattern="[+]?[0-9()-]+">
+        <input value="{{client.homePhone}}" type="tel" id="homePhone" name="homePhone">
         <label for="mobilePhone">Телефон моб</label>
-        <input type="tel" id="mobilePhone" name="mobilePhone" pattern="[+]?[0-9()-]+">
+        <input value="{{client.mobilePhone}}" type="tel" id="mobilePhone" name="mobilePhone">
     </div>
 
     <div class="form-group">
         <label for="email">E-mail</label>
-        <input type="email" id="email" name="email">
+        <input value="{{client.email}}" type="email" id="email" name="email">
     </div>
 
     <div class="form-group">
         <label for="workPlace">Место работы</label>
-        <input type="text" id="workPlace" name="workPlace">
+        <input value="{{client.workPlace}}" type="text" id="workPlace" name="workPlace">
         <label for="position">Должность</label>
-        <input type="text" id="position" name="position">
+        <input value="{{client.position}}" type="text" id="position" name="position">
     </div>
 
 <!--    <div class="form-group">-->
@@ -94,10 +101,10 @@
         <label for="maritalStatus" class="required">Семейное положение</label>
         <select id="maritalStatus" name="maritalStatus" required>
             <option value="">Выберите семейное положение</option>
-            <option value="single">Холост/Не замужем</option>
-            <option value="married">Женат/Замужем</option>
-            <option value="divorced">Разведен/Разведена</option>
-            <option value="widowed">Вдовец/Вдова</option>
+            <option value="single" {{#if (eq client.maritalStatus 'single')}}selected{{/if}}>Холост/Не замужем</option>
+            <option value="married" {{#if (eq client.maritalStatus 'married')}}selected{{/if}}>Женат/Замужем</option>
+            <option value="divorced" {{#if (eq client.maritalStatus 'divorced')}}selected{{/if}}>Разведен/Разведена</option>
+            <option value="widowed" {{#if (eq client.maritalStatus 'widowed')}}selected{{/if}}>Вдовец/Вдова</option>
         </select>
     </div>
 
@@ -105,35 +112,41 @@
         <label for="citizenship" class="required">Гражданство</label>
         <select id="citizenship" name="citizenship" required>
             <option value="">Выберите гражданство</option>
-            <option value="1">Гражданство 1</option>
-            <option value="2">Гражданство 2</option>
-            <option value="3">Гражданство 3</option>
+            <option value="1" {{#if (eq client.citizenship '1')}}selected{{/if}}>Гражданство 1</option>
+            <option value="2" {{#if (eq client.citizenship '2')}}selected{{/if}}>Гражданство 2</option>
+            <option value="3" {{#if (eq client.citizenship '3')}}selected{{/if}}>Гражданство 3</option>
         </select>
     </div>
 
     <div class="form-group">
         <label for="disability" class="required">Инвалидность</label>
-        <input type="radio" id="disability_yes" name="disability" value="y" required>
+        <input type="radio" id="disability_yes" name="disability" value="y" required
+               {{#if (eq client.disability 'y')}}checked{{/if}}>
         <label for="disability_yes">Да</label>
-        <input type="radio" id="disability_no" name="disability" value="n">
+        <input type="radio" id="disability_no" name="disability" value="n"
+               {{#if (eq client.disability 'n')}}checked{{/if}}>
         <label for="disability_no">Нет</label>
         <label for="pensioner" class="required">Пенсионер</label>
-        <input type="radio" id="pensioner_yes" name="pensioner" value="y" required>
+        <input type="radio" id="pensioner_yes" name="pensioner" value="y" required
+               {{#if (eq client.pensioner 'y')}}checked{{/if}}>
         <label for="pensioner_yes">Да</label>
-        <input type="radio" id="pensioner_no" name="pensioner" value="n">
+        <input type="radio" id="pensioner_no" name="pensioner" value="n"
+               {{#if (eq client.pensioner 'n')}}checked{{/if}}>
         <label for="pensioner_no">Нет</label>
     </div>
 
     <div class="form-group">
         <label for="monthlyIncome">Ежемесячный доход (BYN)</label>
-        <input type="text" id="monthlyIncome" name="monthlyIncome" pattern="[0-9\. ]+">
+        <input value="{{client.monthlyIncome}}" type="text" id="monthlyIncome" name="monthlyIncome" pattern="[0-9\. ]+">
     </div>
 
     <div class="form-group">
         <label for="militaryService" class="required">Военнообязанный</label>
-        <input type="radio" id="militaryService_yes" name="militaryService" value="y" required>
+        <input type="radio" id="militaryService_yes" name="militaryService" value="y" required
+               {{#if (eq client.militaryService 'y')}}checked{{/if}}>
         <label for="militaryService_yes">Да</label>
-        <input type="radio" id="militaryService_no" name="militaryService" value="n">
+        <input type="radio" id="militaryService_no" name="militaryService" value="n"
+               {{#if (eq client.militaryService 'n')}}checked{{/if}}>
         <label for="militaryService_no">Нет</label>
     </div>
 
@@ -144,10 +157,10 @@
 {{#if (ifdef error)}}
 <div id="notification-panel">
     {{#if (not error) }}
-        <h4 style="color: green">User add success :)</h4>
+        <h4 style="color: green">User {{#if (ifdef client)}}edit{{else}}add{{/if}} success :)</h4>
     {{else}}
-        <h4 style="color: red">User add failure :(</h4>
+        <h4 style="color: red">User {{#if (ifdef client)}}edit{{else}}add{{/if}} failure :(</h4>
     {{/if}}
 </div>
 {{/if}}
-<script src="notification.js"></script>
+<script src="/notification.js"></script>
