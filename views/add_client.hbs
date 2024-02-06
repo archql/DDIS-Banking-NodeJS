@@ -1,7 +1,7 @@
-<h2 style="text-align: center">Форма {{#if (ifdef client)}}редактирования{{else}}регистрации{{/if}} клиента</h2>
+<h2 style="text-align: center">Форма {{#if edit}}редактирования{{else}}регистрации{{/if}} клиента</h2>
 
 <form method="POST">
-    {{#if (ifdef client)}}
+    {{#if (ifdef client.id)}}
     <div class="form-group">
         <label for="id">ID</label>
         <input id="id" type="text" disabled name="id" value="{{client.id}}">
@@ -157,9 +157,9 @@
 {{#if (ifdef error)}}
 <div id="notification-panel">
     {{#if (not error) }}
-        <h4 style="color: green">User {{#if (ifdef client)}}edit{{else}}add{{/if}} success :)</h4>
+        <h4 style="color: green">User {{#if edit}}edit{{else}}add{{/if}} success :)</h4>
     {{else}}
-        <h4 style="color: red">User {{#if (ifdef client)}}edit{{else}}add{{/if}} failure :(</h4>
+        <h4 style="color: red">User {{#if edit}}edit{{else}}add{{/if}} failure :(</h4>
     {{/if}}
 </div>
 {{/if}}

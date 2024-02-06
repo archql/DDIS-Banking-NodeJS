@@ -1,0 +1,33 @@
+<div class="time-machine">
+    <h1>Current Date: <span>{{this.date}}</span></h1>
+    <img src="https://i.etsystatic.com/12146606/r/il/d91c01/1447654218/il_1080xN.1447654218_2s82.jpg" style="height: 150px" alt="Back to the Future Time Machine">
+    <button class="btn" onclick="fastForward(1)">Fast Forward 1 Month</button>
+    <button class="btn" onclick="fastForward(2)">Fast Forward 2 Months</button>
+    <button class="btn" onclick="fastForward(6)">Fast Forward 6 Months</button>
+    <button class="btn" onclick="fastForward(12)">Fast Forward 1 Year</button>
+</div>
+<script>
+    function fastForward(months) {
+        fetch(`time_machine`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // Add any additional headers if needed
+            },
+            // You can include a request body if required
+            body: JSON.stringify({time: months}),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            // Handle successful deletion
+            if (window)
+                window.location.reload()
+        })
+        .catch(error => {
+            // Handle error
+            console.error('Error deleting item:', error);
+        });
+    }
+</script>

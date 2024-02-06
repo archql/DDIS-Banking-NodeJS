@@ -276,6 +276,7 @@ form {
     display: block;
     width: 100%;
     padding: 10px;
+    margin: 5px;
     background-color: #0047ab;
     color: #fff;
     border: none;
@@ -328,6 +329,19 @@ footer {
     border: 1px solid #ddd;
     border-radius: 8px;
     position: relative;
+}
+
+.time-machine {
+    max-width: 600px;
+    padding: 20px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    flex-wrap: wrap;
+    justify-content: left;
+    display: flex;
+    flex-direction: column;
 }
 
 .clients-data {
