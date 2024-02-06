@@ -90,6 +90,8 @@ app.post('/time_machine',(req,res) => {
     const {time} = req.body
     const dt = parseInt(time)
     //
+    // TODO call DB to process each month of payments
+    //
     date = new Date(date.getFullYear(), date.getMonth() + dt, date.getDate());
     // @ts-ignore
     res.render('time_machine.hbs', {layout : 'index', date: format(date)});
@@ -101,7 +103,7 @@ app.get('/add_client',(req,res) => {
 app.post('/add_client', (req, res) => {
     // Retrieve form data from request body
     const formData = Object.assign({}, req.body);
-    console.log(req.body);
+    // console.log(req.body);
 
     const index = clients.findIndex(client =>
         (client.passportSeries === formData.passportSeries && client.passportNumber === formData.passportNumber) ||
@@ -144,17 +146,30 @@ app.get('/accounts',(req,res) => {
         layout : 'index',
         accounts: [
             {
-                "surname": "Иванов",
-                "name": "Иван",
-                "patronymic": "Иванович",
-                "debit": "1000",
-                "credit": "500",
-                "balance": "500",
+                "surname": "",
+                "name": "СФРБ",
+                "patronymic": "Банка",
+                "debit": "-0",
+                "credit": "+0",
+                "balance": "0",
+                "type": "Passive",
+                "balanceNo": "BBBB",
+                "clientNo": "00000",
+                "accountNo": "000",
+                "controlNo": "B"
+            },
+            {
+                "surname": "",
+                "name": "Касса",
+                "patronymic": "Банка",
+                "debit": "+0",
+                "credit": "-0",
+                "balance": "0",
                 "type": "Active",
-                "balanceNo": "XXXX",
-                "clientNo": "00001",
+                "balanceNo": "BBBB",
+                "clientNo": "00000",
                 "accountNo": "001",
-                "controlNo": "X"
+                "controlNo": "B"
             }
         ]});
 });
