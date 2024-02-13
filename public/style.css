@@ -6,6 +6,7 @@ body {
     font-family: 'Roboto', sans-serif; /* Change to the desired font */
     justify-content: space-between;
     flex: 1;
+    align-items: center;
 }
 html {
     display: flex;
@@ -13,6 +14,9 @@ html {
     flex-direction: column;
     height: 100%;
     width: 100%;
+}
+h2 {
+    margin: 0;
 }
 
 /* main container */
@@ -176,7 +180,10 @@ main ul (DUPLICATION)
     background-color: #0047ab;
     position: sticky;
     display: flex;
-    align-items: center
+    align-items: center;
+}
+.main-nav {
+    width: 100%;
 }
 
 .main_nav_ul li {
@@ -305,6 +312,9 @@ form {
 .float.edit {
     top: 55px;
 }
+.float.contracts {
+    top: 110px;
+}
 
 .error-message {
     color: red;
@@ -363,7 +373,7 @@ footer {
 
 .data-row {
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
 }
 
 .data-label {
@@ -395,11 +405,18 @@ footer {
 .account-details {
     background-color: #f9f9f9;
     max-width: 400px;
-    margin: 10px 10px;
-    padding: 20px;
+    padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
     position: relative;
+}
+.accounts-data {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(300px, 1fr));
+    justify-content: center;
+    grid-gap: 5px;
+    justify-items: stretch;
+    max-width: 1000px;
 }
 
 .row {

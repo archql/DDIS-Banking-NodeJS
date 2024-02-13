@@ -1,7 +1,7 @@
 <h2 style="text-align: center">Форма заключения договора депозита</h2>
 <form action="/deposit" method="POST" class="max-width">
     <div class="form-group">
-        <label for="contractNumber" class="required">Номер договора</label>
+        <label for="contractNumber" class="required">Номер пользователя</label>
         <input type="text" id="contractNumber" name="contractNumber" required>
     </div>
     <div class="form-group">
@@ -25,11 +25,12 @@
         <input type="number" id="depositAmount" name="depositAmount" min="200" max="200000" required>
     </div>
     <div class="form-group">
-        <label for="interestRate" class="required">Срок вклада и процент по вкладу</label>
-        <select id="interestRate" name="interestRate" required disabled>
+        <label for="interestTime" class="required">Срок вклада и процент по вкладу</label>
+        <select id="interestTime" name="interestTime" required disabled>
             <option value="">Выберите срок вклада и процент по нему</option>
         </select>
     </div>
+    <input type="hidden" name="interestRate" id="interestRate" value="0">
     <div class="form-group">
         <label for="interest">Предполагаемый доход</label>
         <div id="interest" name="interest">
@@ -60,46 +61,47 @@
 <script>
     const depositTypeSelect = document.getElementById('depositType');
     const currencyTypeSelect = document.getElementById('currencyType');
+    const interestTimeSelect = document.getElementById('interestTime');
     const interestRateSelect = document.getElementById('interestRate');
-    const interestDiv = document.getElementById('interest');
     const depositAmountInput = document.getElementById('depositAmount');
+    const interestDiv = document.getElementById('interest');
 
-    depositTypeSelect.addEventListener('change', toggleInterestRate);
-    currencyTypeSelect.addEventListener('change', toggleInterestRate);
+    depositTypeSelect.addEventListener('change', toggleInterest);
+    currencyTypeSelect.addEventListener('change', toggleInterest);
 
-    interestRateSelect.addEventListener('change', changedInterestRate);
-    depositAmountInput.addEventListener('input', changedInterestRate);
+    interestTimeSelect.addEventListener('change', changedInterest);
+    depositAmountInput.addEventListener('input', changedInterest);
 
     const revocableOptionsBYN = [
-        { value: 3 * 3 / 12, label: '3% годовых на 3 месяца' },
-        { value: 4.1 * 5 / 12, label: '4,1% годовых на 5 месяцев' },
-        { value: 5 * 7 / 12, label: '5% годовых на 7 месяцев' },
-        { value: 5 * 9 / 12, label: '5% годовых на 9 месяцев' },
-        { value: 10 * 12 / 12, label: '10% годовых на 12 месяцев' }
+        { rate: 3, value:  3 * 30, rate: 3, label: '3% годовых на 90 дней' },
+        { rate: 4.1, value:  5 * 30, label: '4,1% годовых на 150 дней' },
+        { rate: 5, value:  7 * 30, label: '5% годовых на 210 дней' },
+        { rate: 5, value:  9 * 30, label: '5% годовых на 270 дней' },
+        { rate: 10, value:  365, label: '10% годовых на 365 дней' }
     ];
 
     const irrevocableOptionsBYN = [
-        { value: 8.5 * 2 / 12, label: '8,5% годовых на 2 месяца' },
-        { value: 10.8 * 3 / 12, label: '10,8% годовых на 3 месяца' },
-        { value: 11.3 * 5 / 12, label: '11,3% годовых на 5 месяцев' },
-        { value: 11.8 * 7 / 12, label: '11.8% годовых на 7 месяцев' },
-        { value: 12.0 * 9 / 12, label: '12% годовых на 9 месяцев' },
-        { value: 13.5 * 13 / 12, label: '13,5% годовых на 13 месяцев' }
+        { rate: 8.5 , value: 2 * 30, label: '8,5% годовых на 60 дней' },
+        { rate: 10.8, value: 3 * 30, label: '10,8% годовых на 90 дней' },
+        { rate: 11.3, value: 5 * 30, label: '11,3% годовых на 150 дней' },
+        { rate: 11.8, value: 7 * 30, label: '11.8% годовых на 210 дней' },
+        { rate: 12.0, value: 9 * 30, label: '12% годовых на 270 дней' },
+        { rate: 13.5, value: 390, label: '13,5% годовых на 390 дней' }
     ];
 
     const irrevocableOptionsRUB = [
-        { value: 3 * 3 / 12, label: '3% годовых на 3 месяца' },
-        { value: 4 * 7 / 12, label: '4% годовых на 7 месяцев' },
-        { value: 5 * 13 / 12, label: '5% годовых на 13 месяцев' },
-        { value: 5 * 24 / 12, label: '5% годовых на 24 месяца' }
+        { rate: 3, value: 3 * 30, label: '3% годовых на 90 дней' },
+        { rate: 4, value: 7 * 30, label: '4% годовых на 210 дней' },
+        { rate: 5, value: 390, label: '5% годовых на 390 дней' },
+        { rate: 5, value: 720, label: '5% годовых на 720 дней' }
     ];
 
-    function toggleInterestRate() {
+    function toggleInterest() {
         const depositType = depositTypeSelect.value;
         const currencyType = currencyTypeSelect.value;
-        const enableInterestRate = (depositType && currencyType);
+        const enableInterestTime = (depositType && currencyType);
 
-        interestRateSelect.disabled = !enableInterestRate;
+        interestTimeSelect.disabled = !enableInterestTime;
 
         let options = []
         if (depositType === 'revocable' && currencyType === 'BYN') {
@@ -110,27 +112,33 @@
             options = irrevocableOptionsRUB;
         }
         // Удалить все текущие опции
-        interestRateSelect.innerHTML = '<option value="">Выберите срок вклада и процент по нему</option>';
+        interestTimeSelect.innerHTML = '<option value="">Выберите срок вклада и процент по нему</option>';
 
         // Добавить новые опции
         options.forEach(option => {
             const optionElement = document.createElement('option');
             optionElement.value = option.value;
             optionElement.textContent = option.label;
-            interestRateSelect.appendChild(optionElement);
+            optionElement.setAttribute('data-rate', option.rate)
+            interestTimeSelect.appendChild(optionElement);
         });
-        changedInterestRate();
+        changedInterest();
     }
 
-    function  changedInterestRate() {
-        const interestValue = parseFloat(interestRateSelect.value);
+    function changedInterest() {
+        const selectedOption = interestTimeSelect.options[interestTimeSelect.selectedIndex];
+        const interestRate = parseFloat(selectedOption.getAttribute('data-rate'));
+        const interestTime = parseFloat(interestTimeSelect.value);
         const depositAmountValue = parseFloat(depositAmountInput.value);
         const currencyType = currencyTypeSelect.value;
-        if (interestValue && depositAmountValue && currencyType &&
+        
+        if (interestRate && interestTime && depositAmountValue && currencyType &&
                 depositAmountValue >= 200 && depositAmountValue <= 200000) {
-            interestDiv.innerHTML = `${(interestValue * depositAmountValue * 0.01).toFixed(2)} ${currencyType}`
+            interestDiv.innerHTML = `${(interestRate / 365 * interestTime * depositAmountValue * 0.01).toFixed(2)} ${currencyType}`
+            interestRateSelect.value = interestRate
         } else {
             interestDiv.innerHTML = 'Нет';
+            interestRateSelect.value = 0
         }
     }
 </script>

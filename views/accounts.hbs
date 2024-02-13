@@ -1,5 +1,5 @@
 <h2 style="text-align: center">Счета</h2>
-<div class="clients-data">
+<div class="accounts-data">
     {{#if accounts}}
         {{#each accounts}}
         <div class="account-details">
@@ -22,6 +22,10 @@
             <div class="data-row">
                 <div class="data-label">Тип</div>
                 <div class="data-value">{{this.type}}</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">Доп инфа</div>
+                <div class="data-value">{{this.info}}</div>
             </div>
             <div class="data-row">
                 <div class="data-label">Номер счёта</div>

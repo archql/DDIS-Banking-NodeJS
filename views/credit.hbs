@@ -4,7 +4,7 @@
         Важно. Кредиты предоставляются только в валюте BYN под 14% годовых
     </div>
     <div class="form-group">
-        <label for="contractNumber" class="required">Номер договора</label>
+        <label for="contractNumber" class="required">Номер пользователя</label>
         <input type="text" id="contractNumber" name="contractNumber" required>
     </div>
     <div class="form-group">
@@ -12,17 +12,17 @@
         <input type="number" id="creditAmount" name="creditAmount" min="200" max="20000" required>
     </div>
     <div class="form-group">
-        <label for="interestRate" class="required">Срок кредита</label>
-        <select id="interestRate" name="interestRate" required>
+        <label for="interestTime" class="required">Срок кредита</label>
+        <select id="interestTime" name="interestTime" required>
             <option value="">Выберите срок кредита</option>
-            <option value="12">12 месяцев</option>
-            <option value="24">24 месяцев</option>
-            <option value="36">36 месяцев</option>
-            <option value="48">48 месяцев</option>
+            <option value=365>365 дней (1 год)</option>
+            <option value=730>730 дней (2 года)</option>
+            <option value=1095>1095 дней (3 года)</option>
+            <option value=1460>1460 дней (4 года)</option>
         </select>
     </div>
     <div class="form-group">
-        <label for="interest">Предполагаемые выплаты в месяц</label>
+        <label for="interest">Предполагаемые выплаты в день</label>
         <div id="interest" name="interest">
             Нет
         </div>
@@ -51,7 +51,7 @@
     const interestDiv = document.getElementById('interest');
     const interestFullDiv = document.getElementById('interestFull');
     const creditAmountInput = document.getElementById('creditAmount');
-    const interestRateSelect = document.getElementById('interestRate');
+    const interestRateSelect = document.getElementById('interestTime');
 
     creditAmountInput.addEventListener('input', changedInterestRate);
     interestRateSelect.addEventListener('change', changedInterestRate);
@@ -64,9 +64,10 @@
         {
             // Sе = S*P /12*(1+P/12)N/((1+P/12)N -1), аннуитет
             // ДП = ОЗ / КП+ ОЗ х МС Дифференциальная  https://www.lockobank.ru/articles/kredity/raschet-ezhemesyachnogo-platezha-po-kreditu/
-            const monthly = s*0.14/ 12 * Math.pow(1+0.14/ 12, m) / (Math.pow(1+0.14/ 12, m) - 1)
-            interestDiv.innerHTML = `${(monthly).toFixed(2)} BYN`
-            interestFullDiv.innerHTML = `${(monthly * m).toFixed(2)} BYN`
+            const interestDaily = 0.14/ 365
+            const daily = s*interestDaily * Math.pow(1+interestDaily, m) / (Math.pow(1+interestDaily, m) - 1)
+            interestDiv.innerHTML = `${(daily).toFixed(2)} BYN`
+            interestFullDiv.innerHTML = `${(daily * m).toFixed(2)} BYN`
         } else {
             interestDiv.innerHTML = 'Нет';
             interestFullDiv.innerHTML = 'Нет'
