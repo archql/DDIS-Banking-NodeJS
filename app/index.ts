@@ -121,12 +121,23 @@ function processBankingDay(): void {
             // credit is still active
             const days = (credit.endDate.getTime() - credit.startDate.getTime()) / (1000 * 3600 * 24)
             console.log(`days ${days}`)
-            const interestDaily = credit.interestRate / 365
-            const daily = credit.value * interestDaily * Math.pow(1 + interestDaily, days) / (Math.pow(1 + interestDaily, days) - 1)
-            console.log(`daily ${daily}`)
 
-            const valueA = daily - credit.value / days
-            const valueB = credit.value / days
+            let valueA = 0
+            let valueB = 0
+            if (credit.revocable) { // annuity
+                const interestDaily = credit.interestRate / 365
+                const daily = credit.value * interestDaily * Math.pow(1 + interestDaily, days) / (Math.pow(1 + interestDaily, days) - 1)
+                console.log(`daily ${daily}`)
+
+                valueA = daily - credit.value / days
+                valueB = credit.value / days
+            } else {
+                const interestDaily = credit.interestRate / 365
+                const daysLeft = (credit.endDate.getTime() - date.getTime()) / (1000 * 3600 * 24)
+
+                valueA = (credit.value / days * (daysLeft + 1)) * interestDaily
+                valueB = credit.value / days
+            }
 
             console.log(`credit payments ${valueA + valueB} at ${date}`)
             // Interest accrual
@@ -372,15 +383,19 @@ app.post('/deposit',(req,res) => {
     if (index === -1) {
         return res.render('deposit.hbs', {layout : 'index', error: true});
     }
+    let depositType = "безотз"
+    if (formData.depositType.toLowerCase() === "revocable") {
+        depositType = "отзывн"
+    }
     // Deposit contract creation process
     // Add two accounts to user
     const client = clients[formData.contractNumber - 1];
     // create two accounts for client
     const value = parseInt(formData.depositAmount)
     const accCurrent =  addAccountForClient(client, "Passive", 
-        formData.currencyType, 0, "Текущий счет депозита");
+        formData.currencyType, 0, `Текущий счет ${depositType} депозита`);
     const accInterest = addAccountForClient(client, "Passive", 
-        formData.currencyType, 0, "Процентный счет депозита");
+        formData.currencyType, 0, `Процентный счет ${depositType} депозита`);
     accounts.push(accCurrent)
     accounts.push(accInterest)
     // add deposit to client
@@ -422,6 +437,11 @@ app.post('/credit',(req,res) => {
     if (index === -1) {
         return res.render('credit.hbs', {layout : 'index', error: true});
     }
+    // 
+    let creditType = "дифф"
+    if (formData.creditType === "a") {
+        creditType = "аннуитетн"
+    }
     //
     // Credit contract creation process
     // Add two accounts to user
@@ -429,9 +449,9 @@ app.post('/credit',(req,res) => {
     // create two accounts for client
     const value = parseInt(formData.creditAmount)
     const accCurrent =  addAccountForClient(client, "Active", 
-        "BYN", 0, "Текущий счет кредита");
+        "BYN", 0, `Текущий счет ${creditType} кредита`);
     const accInterest = addAccountForClient(client, "Active", 
-        "BYN", 0, "Процентный счет кредита");
+        "BYN", 0, `Процентный счет ${creditType} кредита`);
     accounts.push(accCurrent)
     accounts.push(accInterest)
     // add credit to client
@@ -439,7 +459,7 @@ app.post('/credit',(req,res) => {
         accCurrent: accCurrent,
         accInterest: accInterest,
         interestRate: 0.14, // TODO fixed interest rate
-        revocable: false,
+        revocable: formData.creditType === "a", // here it means annuity
         endDate: new Date(date.getFullYear(), date.getMonth(), date.getDate() + parseInt(formData.interestTime)),
         startDate: new Date(date),
         value: value,

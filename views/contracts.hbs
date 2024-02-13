@@ -44,7 +44,7 @@
     <div class="account-details {{#if this.active}}active{{/if}}">
         <div class="data-row">
             <div class="data-label">Тип</div>
-            <div class="data-value">Кредит</div>
+            <div class="data-value">{{#if this.revocable}}Аннуитетный{{else}}Дифференциальный{{/if}} Кредит</div>
         </div>
         <div class="data-row">
             <div class="data-label">Сумма</div>

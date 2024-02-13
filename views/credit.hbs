@@ -8,6 +8,14 @@
         <input type="text" id="contractNumber" name="contractNumber" required>
     </div>
     <div class="form-group">
+        <label for="creditType" class="required">Тип кредита</label>
+        <select id="creditType" name="creditType" required>
+            <option value="">Выберите тип кредита</option>
+            <option value="a">Аннуитетный</option>
+            <option value="d">Дифференцированный</option>
+        </select>
+    </div>
+    <div class="form-group">
         <label for="creditAmount" class="required">Сумма кредита (от 200 до 20000)</label>
         <input type="number" id="creditAmount" name="creditAmount" min="200" max="20000" required>
     </div>
@@ -52,22 +60,44 @@
     const interestFullDiv = document.getElementById('interestFull');
     const creditAmountInput = document.getElementById('creditAmount');
     const interestRateSelect = document.getElementById('interestTime');
+    const creditTypeSelect = document.getElementById('creditType');
 
     creditAmountInput.addEventListener('input', changedInterestRate);
     interestRateSelect.addEventListener('change', changedInterestRate);
+    creditTypeSelect.addEventListener('change', changedInterestRate)
 
     function  changedInterestRate() {
-        const m = parseFloat(interestRateSelect.value);
+        let m = parseFloat(interestRateSelect.value);
         const s = parseFloat(creditAmountInput.value);
-        if (s && m &&
+        const type = creditTypeSelect.value === "a"
+        if (s && m && creditTypeSelect.value &&
                 s >= 200 && s <= 20000)
         {
-            // Sе = S*P /12*(1+P/12)N/((1+P/12)N -1), аннуитет
-            // ДП = ОЗ / КП+ ОЗ х МС Дифференциальная  https://www.lockobank.ru/articles/kredity/raschet-ezhemesyachnogo-platezha-po-kreditu/
             const interestDaily = 0.14/ 365
-            const daily = s*interestDaily * Math.pow(1+interestDaily, m) / (Math.pow(1+interestDaily, m) - 1)
-            interestDiv.innerHTML = `${(daily).toFixed(2)} BYN`
-            interestFullDiv.innerHTML = `${(daily * m).toFixed(2)} BYN`
+            if (type) {
+                // Sе = S*P /12*(1+P/12)N/((1+P/12)N -1), аннуитет
+                
+                const daily = s*interestDaily * Math.pow(1+interestDaily, m) / (Math.pow(1+interestDaily, m) - 1)
+                interestDiv.innerHTML = `${(daily).toFixed(2)} BYN`
+                interestFullDiv.innerHTML = `${(daily * m).toFixed(2)} BYN`
+            } else {
+                // ДП = ОЗ / КП+ ОЗ х МС Дифференциальная  https://www.lockobank.ru/articles/kredity/raschet-ezhemesyachnogo-platezha-po-kreditu/
+                //TEST
+                //const interestDaily = 0.14/ 12
+                //m= 12
+                //
+                let dailyFirst = s / m  + s * interestDaily
+                let dailyLast = dailyFirst
+                let sum = 0
+                let rest = s
+                for (let i = m; i > 0; i--) {
+                    dailyLast = s / m  + rest * interestDaily
+                    sum += dailyLast
+                    rest -= s / m
+                }
+                interestDiv.innerHTML = `${(dailyFirst).toFixed(2)} -> ${(dailyLast).toFixed(2)} BYN`
+                interestFullDiv.innerHTML = `${(sum).toFixed(2)} BYN`
+            }
         } else {
             interestDiv.innerHTML = 'Нет';
             interestFullDiv.innerHTML = 'Нет'
