@@ -418,6 +418,9 @@ footer {
     justify-items: stretch;
     max-width: 1000px;
 }
+.account-details.active {
+    background-color: #f0fff0;
+}
 
 .row {
     margin-bottom: 10px;

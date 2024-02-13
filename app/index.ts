@@ -510,6 +510,58 @@ app.get('/edit_client/:id', (req, res) => {
         edit: true
     });
 });
+app.get('/contracts/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    console.log(`client edit request ${id}`)
+    // get client data by id
+    const client = clients[id - 1]
+
+    if (!client) {
+        return res.status(404).render('404.hbs', {layout : 'index'});
+    }
+
+    res.render('contracts.hbs', {
+        layout : 'index',
+        client: client
+    });
+});
+app.post('/contracts/:client_id/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const client_id = parseInt(req.params.client_id);
+    console.log(`contract revoke request ${client_id} ${id}`)
+    // get client data by id
+    const client = clients[client_id - 1]
+    const deposit = client.deposits[id]
+
+    if (!client || !deposit || !deposit.active ) {
+        return res.render('contracts.hbs', {
+            layout : 'index',
+            client: client,
+            error: true
+        });
+    }
+    // Revoke deposit (DUPLICATED!!!!!)
+    // finish of contract?
+    console.log(`deposit withdrawal on demand at ${date}`)
+    deposit.active = false
+    // Deposit withdrawal
+    accountCashHolder.debit += deposit.value
+    deposit.accCurrent.credit += deposit.value
+    deposit.accCurrent.debit += deposit.value
+    accountCashRegister.debit += deposit.value
+    accountCashRegister.credit += deposit.value
+    //
+    deposit.accCurrent.info += " (Закрыт досрочно)"
+    deposit.accInterest.info += " (Закрыт досрочно)"
+    //
+    fixBalance([accountCashRegister, accountCashHolder, deposit.accCurrent, deposit.accInterest])
+    //
+    res.render('contracts.hbs', {
+        layout : 'index',
+        client: client,
+        error: false
+    });
+});
 app.post('/edit_client/:id', (req, res) => {
         const id = parseInt(req.params.id);
         console.log(`client fuck request ${id}`)

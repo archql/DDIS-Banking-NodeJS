@@ -3,6 +3,8 @@ const deleteButtons = document.querySelectorAll('.delete');
 
 const editButtons = document.querySelectorAll('.edit');
 
+const contractsButtons = document.querySelectorAll('.contracts');
+
 // Loop through each delete button and add event listener
 deleteButtons.forEach(button => {
     button.addEventListener('click', function() {
@@ -44,5 +46,16 @@ editButtons.forEach(button => {
         console.log(`Edit button clicked! ${id}`);
         //
         window.location.href = `/edit_client/${id}`
+    });
+})
+
+contractsButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        //
+        const id = button.dataset.id;
+        // Handle delete button click event
+        console.log(`contracts button clicked! ${id}`);
+        //
+        window.location.href = `/contracts/${id}`
     });
 })

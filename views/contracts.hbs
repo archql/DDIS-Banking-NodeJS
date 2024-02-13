@@ -1,0 +1,116 @@
+<h2 style="text-align: center">Договоры клиента {{client.surname}} {{client.name}} {{client.patronymic}} {{this.error}}</h2>
+<div class="accounts-data">
+    {{#if client.deposits}}
+    {{#each client.deposits}}
+    <div class="account-details {{#if this.active}}active{{/if}}">
+        {{#if this.revocable}}
+        {{#if this.active}}
+        <div class="btn revoke-contract float" data-id="{{@index}}" data-clientid="{{@root.client.id}}">
+            Revoke 
+        </div>
+        {{/if}}
+        {{/if}}
+        <div class="data-row">
+            <div class="data-label">Тип</div>
+            <div class="data-value">{{#if this.revocable}}Отзывной{{else}}Безотзывной{{/if}} Депозит</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">Статус</div>
+            <div class="data-value">{{#if this.active}}Активен{{else}}Закрыт{{/if}}</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">Сумма</div>
+            <div class="data-value mono">{{money this.value}}</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">Условия</div>
+            <div class="data-value mono">{{multiply this.interestRate 100}}%</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">Дата заключения</div>
+            <div class="data-value">{{formatDate this.startDate}}</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">Дата окончания</div>
+            <div class="data-value">{{formatDate this.endDate}}</div>
+        </div>
+    </div>
+    {{/each}}
+    {{else}}
+        <div>No deposits :/</div>
+    {{/if}}
+    {{#if client.credits}}
+    {{#each client.credits}}
+    <div class="account-details {{#if this.active}}active{{/if}}">
+        <div class="data-row">
+            <div class="data-label">Тип</div>
+            <div class="data-value">Кредит</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">Сумма</div>
+            <div class="data-value mono">{{this.value}}</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">Условия</div>
+            <div class="data-value mono">{{multiply this.interestRate 100}}%</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">Дата заключения</div>
+            <div class="data-value">{{formatDate this.startDate}}</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">Дата окончания</div>
+            <div class="data-value">{{formatDate this.endDate}}</div>
+        </div>
+    </div>
+    {{/each}}
+    {{else}}
+        <div>No credits :/</div>
+    {{/if}}
+</div>
+{{#if (ifdef error)}}
+<div id="notification-panel">
+    {{#if (not error) }}
+        <h4 style="color: green">User {{#if edit}}edit{{else}}add{{/if}} success :)</h4>
+    {{else}}
+        <h4 style="color: red">User {{#if edit}}edit{{else}}add{{/if}} failure :(</h4>
+    {{/if}}
+</div>
+{{/if}}
+<script src="/notification.js"></script>
+<script>
+    const revokeButtons = document.querySelectorAll('.revoke-contract');
+    revokeButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        //
+        const id = button.dataset.id;
+        const client_id = button.dataset.clientid;
+        // Handle delete button click event
+        console.log(`Revoke button clicked! ${id} ${client_id}`);
+        // Add your delete logic here
+        fetch(`${client_id}/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // Add any additional headers if needed
+            },
+            // You can include a request body if required
+            // body: JSON.stringify({}),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            // Handle successful deletion
+            console.log('Item revoked successfully');
+            if (window)
+                window.location.reload()
+        })
+        .catch(error => {
+            // Handle error
+            console.error('Error revoking item:', error);
+        });
+    });
+});
+
+</script>
