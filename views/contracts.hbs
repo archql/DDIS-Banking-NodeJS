@@ -48,7 +48,7 @@
         </div>
         <div class="data-row">
             <div class="data-label">Сумма</div>
-            <div class="data-value mono">{{this.value}}</div>
+            <div class="data-value mono">{{money this.value}}</div>
         </div>
         <div class="data-row">
             <div class="data-label">Условия</div>
@@ -61,6 +61,14 @@
         <div class="data-row">
             <div class="data-label">Дата окончания</div>
             <div class="data-value">{{formatDate this.endDate}}</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">Номер привязанной карты</div>
+            <div class="data-value mono">{{this.card.number}}</div>
+        </div>
+        <div class="data-row">
+            <div class="data-label">PIN code</div>
+            <div class="data-value">{{this.card.pin}}</div>
         </div>
     </div>
     {{/each}}

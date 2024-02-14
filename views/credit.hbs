@@ -44,6 +44,28 @@
     <div class="form-group">
         <input type="submit" value="Заключить договор" class="btn">
     </div>
+    {{#if (ifdef plan)}}
+    <table>
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Сумма к оплате</th>
+                <th>Остаток</th>
+                <th>Выплачено</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each plan}}
+            <tr>
+                <td>{{formatDate date}}</td>
+                <td>{{money payment}}</td>
+                <td>{{money rest}}</td>
+                <td>{{money sum}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    {{/if}}
 </form>
 {{#if (ifdef error)}}
     <div id="notification-panel">

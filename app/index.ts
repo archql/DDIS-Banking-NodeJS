@@ -473,11 +473,49 @@ app.post('/credit',(req,res) => {
     accountCashRegister.credit += value
     //
     fixBalance([accountCashRegister, accountCashHolder, accCurrent, accInterest])
+    // generate plan
+    const plan: {date: Date, payment: number, rest: number, sum: number}[] = []
+    if (formData.creditType === "a") { // annuity
+        const m = parseInt(formData.interestTime)
+        const s = value
+        const interestDaily = 0.14 / 365
+        const daily = s*interestDaily * Math.pow(1+interestDaily, m) / (Math.pow(1+interestDaily, m) - 1)
+        let rest = s
+        let sum = 0
+        for (let i = 0; i < m; ++i) {
+            rest -= s / m
+            sum += daily
+            plan.push({
+                date: new Date(date.getFullYear(), date.getMonth(), date.getDate() + i + 1),
+                payment: daily,
+                rest: Math.abs(rest),
+                sum: Math.abs(sum)
+            })
+        }
+    } else {
+        const m = parseInt(formData.interestTime)
+        const s = value
+        const interestDaily = 0.14 / 365
+        let dailyFirst = s / m  + s * interestDaily
+        let rest = s
+        let sum = 0
+        for (let i = 0; i < m; i++) {
+            dailyFirst = s / m  + rest * interestDaily
+            sum += dailyFirst
+            rest -= s / m
+            plan.push({
+                date: new Date(date.getFullYear(), date.getMonth(), date.getDate() + i + 1),
+                payment: dailyFirst,
+                rest: Math.abs(rest),
+                sum: Math.abs(sum)
+            })
+        }
+    }
     //
     console.log("credit contract signed")
     console.log(client)
     //
-    res.render('credit.hbs', {layout : 'index', error: false});
+    res.render('credit.hbs', {layout : 'index', error: false, plan: plan});
 });
 
 app.get('/accounts',(req,res) => {
@@ -584,7 +622,7 @@ app.post('/contracts/:client_id/:id', (req, res) => {
 });
 app.post('/edit_client/:id', (req, res) => {
         const id = parseInt(req.params.id);
-        console.log(`client fuck request ${id}`)
+        console.log(`client uck request ${id}`)
         // get client data by id
         const client = Object.assign({}, req.body);
         client.id = id // >??????
