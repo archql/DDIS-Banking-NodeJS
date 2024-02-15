@@ -1,0 +1,242 @@
+<div class="container">   
+    <form>
+      <div class="input-group">
+        <label for="number">Card Number</label>
+        <input type="text" id="number" placeholder="Enter your card number" pattern="\d{4}-\d{4}-\d{4}-\d{4}" maxlength="19" oninput="formatCardNumber()">
+      </div>
+      
+      <div class="input-group">
+        <label for="pin">PIN</label>
+        <input type="password" id="pin" placeholder="Enter your PIN" pattern="\d{4}" maxlength="4">
+      </div>
+      
+      <button class="btn" type="submit" id="btn-login" onclick="submitForm(event)">Login</button>
+    </form>
+    <div class="error-panel" id="error-panel">
+        <p id="error-message"></p>
+    </div>
+</div>
+<div class="container" id="menu-panel">
+    <button class="btn" type="submit" onclick="cashDisplay(event)">Остаток на счете</button>
+    <button class="btn" type="submit" onclick="cashWithdrawalX(event)">Снятие наличных со счета</button>
+    <button class="btn" type="submit" onclick="cashPaymentX(event)">Платеж</button>
+</div>
+<div class="container" id="menu-payment-panel">
+    <div class="input-group">
+        <label for="pin">Номер телефона</label>
+        <input type="phone" id="phone" placeholder="Введите номер телефона">
+    </div>
+    <div class="input-group">
+        <label for="pin">Сумма оплаты</label>
+        <input type="number" id="sum_phone" placeholder="Введите сумму">
+    </div>
+    <button class="btn" type="submit" onclick="cashPayment(event)">Далее</button>
+</div>
+<div class="container" id="menu-withdraw-panel">
+    <div class="input-group">
+        <label for="pin">Сумма cнятия</label>
+        <input type="number" id="sum_withdraw" placeholder="Введите сумму">
+    </div>
+    <button class="btn" type="submit" onclick="cashWithdrawal(event)">Далее</button>
+</div>
+<div class="container" id="receipt-panel">
+    <div class="receipt">
+    <h1>XBank Receipt</h1>
+    <div class="receipt-details">
+      <p id="receipt_reason"><strong>Operation:</strong> xxx</p>
+      <p id="receipt_date"><strong>Date:</strong> February 15, 2024</p>
+      <p id="receipt_time"><strong>Time:</strong> 10:30 AM</p>
+      <p><strong>Место:</strong> XYZ Bank ATM</p>
+      <p id="receipt_id"><strong>Transaction ID:</strong> 123456789</p>
+      <p id="receipt_account"><strong>Account Number:</strong> XXXX-XXXX-XXXX-1234</p>
+      <p id="receipt_withdraw"><strong>Amount Withdrawn:</strong> 200.00</p>
+      <p id="receipt_balance"><strong>Available Balance:</strong> 1,500.00</p>
+    </div>
+  </div>
+</div>
+<script>
+    let timeoutId = undefined
+
+    let errorMessageElement = document.getElementById("error-message");
+    let errorPanelElement = document.getElementById("error-panel");
+    let menuPanelElement = document.getElementById("menu-panel");
+    let cardNumberInput = document.getElementById("number");
+    let PaymentPanelElement = document.getElementById("menu-payment-panel");
+    let WithdrawPanelElement = document.getElementById("menu-withdraw-panel");
+    let pinInput = document.getElementById('pin');
+    let sumPhoneInput = document.getElementById("sum_phone");
+    let sumWithdrawInput = document.getElementById("sum_withdraw");
+    let phoneInput = document.getElementById("phone");
+
+    let btnSubmit = document.getElementById("btn-login")
+
+    let receiptPanelElement = document.getElementById("receipt-panel");
+
+    let patternNumber = /^[\d]{4}-[\d]{4}-[\d]{4}-[\d]{4}$/;
+    let patternPIN = /^[\d]{4}$/;
+
+    function formatCardNumber() {
+      let cardNumberValue = cardNumberInput.value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
+      let formattedCardNumber = "";
+
+      for (let i = 0; i < cardNumberValue.length; i++) {
+        if (i > 0 && i % 4 === 0) {
+          formattedCardNumber += "-";
+        }
+        formattedCardNumber += cardNumberValue.charAt(i);
+      }
+
+      cardNumberInput.value = formattedCardNumber;
+    }
+    function submitForm(event) {
+        event.preventDefault(); // Prevent default form submission behavior
+
+        let form = document.getElementById('login-form');
+
+        timeoutId && clearTimeout(timeoutId);
+        receiptPanelElement.style.display = "none"
+        if (!patternNumber.test(cardNumberInput.value) || !patternPIN.test(pinInput.value)) {
+            errorMessageElement.textContent = "Wrong input";
+            errorPanelElement.style.display = "block"
+            menuPanelElement.style.display = "none"
+            cardNumberInput.disabled = false
+            pinInput.disabled = false
+            return
+        }
+
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/atm/login', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+            const response = JSON.parse(xhr.responseText)
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                errorPanelElement.style.display = "none"
+                menuPanelElement.style.display = "block"
+                btnSubmit.style.display = "none"
+                cardNumberInput.disabled = true
+                pinInput.disabled = true
+
+            } else {
+                // Handle error response
+                errorMessageElement.textContent = response.error;
+                errorPanelElement.style.display = "block"
+                menuPanelElement.style.display = "none"
+                cardNumberInput.disabled = false
+                pinInput.disabled = false
+            }
+        };
+        let data = JSON.stringify({ number: cardNumberInput.value, pin: pinInput.value });
+        xhr.send(data);
+    }
+    function cashDisplay(event) {
+        event.preventDefault()
+        menuPanelElement.style.display = "none"
+        // just request
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', '/atm/balance', true);
+        xhr.onreadystatechange = function () {
+            const response = JSON.parse(xhr.responseText)
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // print receipt
+                printReceipt(response.receipt)
+                // back to default
+                toDefaultState()
+            } else {
+                // back to default
+                toDefaultState()
+                // Handle error response
+                errorMessageElement.textContent = response.error;
+                errorPanelElement.style.display = "block"
+            }
+        }
+        xhr.send();
+    }
+    function cashWithdrawalX(event) {
+        event.preventDefault()
+        menuPanelElement.style.display = "none"
+        WithdrawPanelElement.style.display = "block"
+        // amount??
+    }
+    function cashPaymentX(event) {
+        event.preventDefault()
+        menuPanelElement.style.display = "none"
+        PaymentPanelElement.style.display = "block"
+
+    }
+    function cashPayment(event) {
+        event.preventDefault()
+        //
+        // just request
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/atm/payment', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+            const response = JSON.parse(xhr.responseText)
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // print receipt
+                printReceipt(response.receipt)
+                // back to default
+                toDefaultState()
+            } else {
+                // back to default
+                toDefaultState()
+                // Handle error response
+                errorMessageElement.textContent = response.error;
+                errorPanelElement.style.display = "block"
+            }
+        }
+        let data = JSON.stringify({ sum: sumPhoneInput.value, phone: phoneInput.value });
+        xhr.send(data);
+    }
+    function cashWithdrawal(event) {
+        event.preventDefault()
+        //
+        // just request
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/atm/withdraw', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+            const response = JSON.parse(xhr.responseText)
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // print receipt
+                printReceipt(response.receipt)
+                // back to default
+                toDefaultState()
+            } else {
+                // back to default
+                toDefaultState()
+                // Handle error response
+                errorMessageElement.textContent = response.error;
+                errorPanelElement.style.display = "block"
+            }
+        }
+        let data = JSON.stringify({ sum: sumWithdrawInput.value });
+        xhr.send(data);
+    }
+    function toDefaultState() {
+        errorMessageElement.textContent = "";
+        errorPanelElement.style.display = "none"
+        menuPanelElement.style.display = "none"
+        PaymentPanelElement.style.display = "none"
+        WithdrawPanelElement.style.display = "none"
+        btnSubmit.style.display = "block"
+        cardNumberInput.disabled = false
+        pinInput.disabled = false
+        pinInput.value = ''
+    }
+    function printReceipt(receipt) {
+        receiptPanelElement.style.display = "block"
+        timeoutId = setTimeout(function() {
+            receiptPanelElement.style.display = "none"
+        }, 15000);
+        //
+        document.getElementById('receipt_date').innerHTML  = "<strong>Дата:</strong> " + receipt.date;
+        document.getElementById('receipt_time').innerHTML  = "<strong>Время:</strong> "+receipt.time;
+        document.getElementById('receipt_id').innerHTML  = "<strong>Номер транзакции:</strong> "+receipt.id;
+        document.getElementById('receipt_account').innerHTML  = "<strong>Карта:</strong> "+receipt.accountNo;
+        document.getElementById('receipt_withdraw').innerHTML  = "<strong>Сумма операции:</strong> "+receipt.sum;
+        document.getElementById('receipt_balance').innerHTML  = "<strong>Остаток:</strong> "+receipt.balance;
+        document.getElementById('receipt_reason').innerHTML  = "<strong>Операция:</strong> "+receipt.reason;
+    }
+    
+  </script>

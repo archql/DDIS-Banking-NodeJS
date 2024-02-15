@@ -4,8 +4,56 @@ import http from 'http';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import * as helpers from '../helpers/helpers.js'
+import crypto from 'crypto'
+import cookieParser from 'cookie-parser'
+
+function generateRandomString(length: number) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const randomBytes = crypto.randomBytes(length);
+    let result = '';
+  
+    for (let i = 0; i < length; i++) {
+      const randomIndex = randomBytes[i] % characters.length;
+      result += characters.charAt(randomIndex);
+    }
+  
+    return result;
+  }
 
 //import {Controller} from "./entities/controller.js";
+
+function payByCard(card: Card, value: number): boolean {
+    if (!card.contract || card.contract.accCurrent.balance < value || card.attempts !== 3) return false;
+    card.contract.accCurrent.credit += value
+    accountCashRegister.debit += value
+    accountCashRegister.credit += value
+    fixBalance([card.contract.accCurrent, accountCashRegister])
+    return true;
+}
+function findCard(number: string, pin: string): Card | undefined {
+    const card = cards.find((card) => card.number === number);
+    if (!card) return undefined;
+    if (card.pin !== pin) {
+        card.attempts -= 1
+        return undefined;
+    }
+    return card
+}
+function createNewCard(client_id: number, credit_id: number): Card {
+    let randomNumber = Math.floor(Math.random() * 10000); // Generate a random number between 0 and 9999
+    let numberString = randomNumber.toString().padStart(4, '0'); // Convert the number to a string and pad it with leading zeros if necessary
+    let number = "3456-" 
+    + ((client_id * 17 + 6789) % 10000).toString().padStart(4, '0') + "-" 
+    + ((credit_id * 31 + 4321) % 10000).toString().padStart(4, '0') + "-" 
+    + Math.floor(Math.random() * 10000).toString().padStart(4, '0')
+    return {
+        number: number,
+        pin: numberString,
+        contract: null, 
+        attempts: 3,
+        otp: ''
+    }
+}
 
 function isLessThanOrEqualDay(date1: Date, date2: Date) {
     const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
@@ -186,7 +234,8 @@ interface Contract {
     revocable: boolean,
     startDate: Date,
     endDate: Date,
-    active: boolean
+    active: boolean,
+    card: Card | null
 }
 interface BankAccount {
     surname: string;
@@ -232,7 +281,13 @@ interface Client {
     "deposits": Contract[],
     "credits": Contract[]
 }
-
+interface Card {
+    number: string,
+    pin: string,
+    contract: Contract | null,
+    attempts: number,
+    otp: string
+}
 // setup express
 const server_root = path.resolve(__dirname, '../public');
 const server_views = path.resolve(__dirname, '../views');
@@ -252,6 +307,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.json())
 app.use(express.static(server_root));
 app.use('/attachments', express.static(server_attachments))
+app.use(cookieParser());
 
 // create server
 const server = http.createServer(app);
@@ -323,6 +379,11 @@ const accounts: BankAccount[] = [
 const accountCashRegister = accounts[0];
 const accountCashHolder = accounts[1];
 
+const cards: Card[] = []
+
+app.get('/atm',(req,res) => {
+    res.render('atm.hbs', {layout : 'atm'});
+});
 app.get('/',(req,res) => {
     res.render('main.hbs', {layout : 'index'});
 });
@@ -399,7 +460,8 @@ app.post('/deposit',(req,res) => {
     accounts.push(accCurrent)
     accounts.push(accInterest)
     // add deposit to client
-    client.deposits.push({
+    const card: Card = {number: "0000-0000-0000-0000", pin: "0000", contract: null, attempts: 3, otp: ''};
+    const contract: Contract = {
         accCurrent: accCurrent,
         accInterest: accInterest,
         interestRate: parseFloat(formData.interestRate) * 0.01, // TODO
@@ -407,8 +469,12 @@ app.post('/deposit',(req,res) => {
         endDate: new Date(date.getFullYear(), date.getMonth(), date.getDate() + parseInt(formData.interestTime)),
         startDate: new Date(date),
         value: value,
-        active: true
-    })
+        active: true,
+        card: card
+    };
+    card.contract = contract
+    client.deposits.push(contract)
+    // cards.push(card)
     // add records to bank accounts (signing the contract)
     accountCashRegister.debit += value
     accountCashRegister.credit += value
@@ -455,7 +521,8 @@ app.post('/credit',(req,res) => {
     accounts.push(accCurrent)
     accounts.push(accInterest)
     // add credit to client
-    client.credits.push({
+    const card: Card = createNewCard(client.id, client.deposits.length);
+    const contract: Contract = {
         accCurrent: accCurrent,
         accInterest: accInterest,
         interestRate: 0.14, // TODO fixed interest rate
@@ -463,14 +530,19 @@ app.post('/credit',(req,res) => {
         endDate: new Date(date.getFullYear(), date.getMonth(), date.getDate() + parseInt(formData.interestTime)),
         startDate: new Date(date),
         value: value,
-        active: true
-    })
+        active: true,
+        card: card
+    };
+    card.contract = contract;
+    client.credits.push(contract);
+    cards.push(card)
     // add records to bank accounts (signing the contract)
     accountCashHolder.debit += value
     accCurrent.debit += value
-    accCurrent.credit += value
-    accountCashRegister.debit += value
-    accountCashRegister.credit += value
+    // THIS IS AUTO CASH REMOVAL BY CLIENT. COMMENTED IT OUT TO ALLOW SPEND MONEY FROM IT LATER
+    //accCurrent.credit += value
+    //accountCashRegister.debit += value
+    //accountCashRegister.credit += value
     //
     fixBalance([accountCashRegister, accountCashHolder, accCurrent, accInterest])
     // generate plan
@@ -620,6 +692,30 @@ app.post('/contracts/:client_id/:id', (req, res) => {
         error: false
     });
 });
+app.post('/contracts/unlock/:client_id/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const client_id = parseInt(req.params.client_id);
+    console.log(`contract unlock request ${client_id} ${id}`)
+    // get client data by id
+    const client = clients[client_id - 1]
+    const credit = client.credits[id]
+
+    if (!client || !credit || !credit.active || !credit.card) {
+        return res.render('contracts.hbs', {
+            layout : 'index',
+            client: client,
+            error: true
+        });
+    }
+    //
+    credit.card.attempts = 3;
+    //
+    res.render('contracts.hbs', {
+        layout : 'index',
+        client: client,
+        error: false
+    });
+});
 app.post('/edit_client/:id', (req, res) => {
         const id = parseInt(req.params.id);
         console.log(`client uck request ${id}`)
@@ -637,6 +733,133 @@ app.post('/edit_client/:id', (req, res) => {
             });
     }
 );
+//
+app.post('/atm/login', (req, res) => {
+    // @ts-ignore
+    const {pin, number} = req.body
+    // Find the card by number
+    console.log(req.body)
+    console.log(cards)
+    const card = cards.find(card => card.number === number);
+    if (!card) {
+        return res.status(404).json({ error: "Card not found" });
+    }
+    if (card.attempts === 0) {
+        return res.status(403).json({ error: "Card is blocked" });
+    }
+    if (card.pin !== pin) {
+        card.attempts--;
+        if (card.attempts === 0) {
+            return res.status(403).json({ error: "Card is blocked" });
+        }
+        return res.status(401).json({ error: `Wrong PIN. ${card.attempts} attempts left`});
+    }
+
+    // Proceed with successful login
+    // You can perform any necessary logic here
+    card.attempts = 3
+
+    const OTP = generateRandomString(64)
+    card.otp = OTP
+    res.cookie('OTP', `${number}|${OTP}`, {
+        maxAge: 120000,
+        httpOnly: true,
+        path: '/',
+      });
+
+    return res.status(200).json({ success: "Login successful" });
+});
+app.get('/atm/balance', (req, res) => {
+    const [number, otp] = req.cookies.OTP.split('|');
+    //
+    const card = cards.find(card => card.number === number);
+    if (!card) {
+        return res.status(404).json({ error: "Card not found" });
+    }
+    if (card.otp !== otp || card.otp === '') {
+        card.otp = ''
+        return res.status(403).json({ error: "OTP has expired" });
+    }
+    card.otp = ''
+    //
+    let currentDate = new Date();
+    return res.status(200).json({ error: "OK", receipt: {
+        reason: `Просмотр баланса`,
+        date: currentDate.toLocaleDateString(),
+        time: currentDate.toLocaleTimeString(),
+        id: Math.floor(Math.random() * 100000000).toString().padStart(8, '0'),
+        accountNo: `${card.number.slice(0,4)}-XXXX-XXXX-${card.number.slice(-4)}`,
+        sum: `0 BYN`,
+        balance: `${card.contract?.accCurrent.balance} BYN`,
+    } });
+})
+app.post('/atm/withdraw', (req, res) => {
+    const [number, otp] = req.cookies.OTP.split('|');
+    const {sum} = req.body
+    //
+    const card = cards.find(card => card.number === number);
+    if (!card) {
+        return res.status(404).json({ error: "Card not found" });
+    }
+    if (card.otp !== otp || card.otp === '') {
+        card.otp = ''
+        return res.status(403).json({ error: "OTP has expired" });
+    }
+    card.otp = ''
+    const s = parseInt(sum)
+    if (!s) {
+        return res.status(400).json({ error: "Wrong sum" });
+    }
+    //
+    if (!payByCard(card, s)) {
+        return res.status(400).json({ error: "Not enough balance" });
+    } else {
+        let currentDate = new Date();
+        return res.status(200).json({ error: "OK", receipt: {
+            reason: `Снятие наличных`,
+            date: currentDate.toLocaleDateString(),
+            time: currentDate.toLocaleTimeString(),
+            id: Math.floor(Math.random() * 100000000).toString().padStart(8, '0'),
+            accountNo: `${card.number.slice(0,4)}-XXXX-XXXX-${card.number.slice(-4)}`,
+            sum: `${s} BYN`,
+            balance: `${card.contract?.accCurrent.balance} BYN`,
+        } });
+    }
+})
+app.post('/atm/payment', (req, res) => {
+    const [number, otp] = req.cookies.OTP.split('|');
+    const {sum, phone} = req.body
+    //
+    const card = cards.find(card => card.number === number);
+    if (!card) {
+        return res.status(404).json({ error: "Card not found" });
+    }
+    if (card.otp !== otp || card.otp === '') {
+        card.otp = ''
+        return res.status(403).json({ error: "OTP has expired" });
+    }
+    card.otp = ''
+    const s = parseInt(sum)
+    if (!s) {
+        return res.status(400).json({ error: "Wrong sum" });
+    }
+    //
+    if (!payByCard(card, s)) {
+        return res.status(400).json({ error: "Not enough balance" });
+    } else {
+        let currentDate = new Date();
+        return res.status(200).json({ error: "OK", receipt: {
+            reason: `Пополнение мобильного телефона ${phone}`,
+            date: currentDate.toLocaleDateString(),
+            time: currentDate.toLocaleTimeString(),
+            id: Math.floor(Math.random() * 100000000).toString().padStart(8, '0'),
+            accountNo: `${card.number.slice(0,4)}-XXXX-XXXX-${card.number.slice(-4)}`,
+            sum: `${s} BYN`,
+            balance: `${card.contract?.accCurrent.balance} BYN`,
+        } });
+    }
+
+})
 
 // 404
 app.all('*', function(req, res){
